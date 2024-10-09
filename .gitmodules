@@ -1,0 +1,6 @@
+[submodule "Hypr"]
+	path = Hypr
+	url = https://github.com/hengtseChou/Hypr.git
+[submodule "Conf"]
+	path = Conf
+	url = https://github.com/hengtseChou/Conf.git
