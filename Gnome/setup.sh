@@ -11,7 +11,6 @@ apps=(
 	gnome-text-editor
 	polkit-gnome
 	xdg-user-dirs-gtk
-	ulauncher
 	nautilus
 	sushi
 	file-roller
@@ -28,4 +27,20 @@ fonts=(
 	ttf-ubuntu-mono-nerd
 )
 
+echo ":: Installing apps..."
 paru -S --needed "${apps[@]}"
+echo ":: Installing fonts..."
+paru -S --needed "${fonts[@]}"
+read -p ":: Skip theming? (y/N): " skip_theming
+skip_theming=${skip_theming:-N}
+if [[ "$skip_theming" =~ ^([nN][oO]?|[yY][eE][sS]?)$ ]]; then
+	echo ":: Installing theme..."
+	paru -S --needed "${theming[@]}"
+	gsettings set org.gnome.desktop.interface gtk-theme 'Yaru'
+	gsettings set org.gnome.desktop.interface icon-theme 'Yaru'
+else
+	echo ":: Skipping theme installation."
+fi
+
+echo ":: Restoring base settings..."
+dconf load / < $PWD/base-settings.ini
