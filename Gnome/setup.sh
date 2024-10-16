@@ -22,6 +22,7 @@ theming=(
 	yaru-gtk-theme
 	yaru-icon-theme
 )
+
 fonts=(
 	ttf-ubuntu-font-family
 	ttf-ubuntu-mono-nerd
@@ -54,12 +55,20 @@ extensions=(
 	kimpanel@kde.org
 )
 
-if ! command -v gext 2>&1 >/dev/null; then
-	echo ":: Error: gnome-extensions-cli is not installed. Skipping install extensions."
-	exit 1
+read -p ":: Skip extensions install? (y/N): " skip_extensions
+skip_extensions=${skip_extensions:-N}
+if [[ "$skip_extensions" =~ ^([nN][oO]?|[yY][eE][sS]?)$ ]]; then
+	if ! command -v gext 2>&1 >/dev/null; then
+		echo ":: Error: gnome-extensions-cli is not installed. Skipping extensions install."
+		exit 1
+	else
+		echo ":: Installing extensions..."
+		for extension in "${extensions[@]}"; do
+			gext install $extension
+		done
+		echo ":: Restoring extensions settings..."
+		dconf load / <$PWD/extensions-settings.ini
+	fi
 else
-	echo ":: Installing extensions..."
-	for extension in "${extensions[@]}"; do
-		gext install $extension
-	done
+	echo ":: Skipping extensions install."
 fi
