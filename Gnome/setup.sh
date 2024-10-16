@@ -41,6 +41,25 @@ if [[ "$skip_theming" =~ ^([nN][oO]?|[yY][eE][sS]?)$ ]]; then
 else
 	echo ":: Skipping theme installation."
 fi
-
 echo ":: Restoring base settings..."
-dconf load / < $PWD/base-settings.ini
+dconf load / <$PWD/base-settings.ini
+
+extensions=(
+	AlphabeticalAppGrid@stuarthayhurst
+	blur-my-shell@aunetx
+	burn-my-windows@schneegans.github.com
+	caffeine@patapon.info
+	clipboard-indicator@tudmotu.com
+	dash-to-dock@micxgx.gmail.com
+	kimpanel@kde.org
+)
+
+if ! command -v gext 2>&1 >/dev/null; then
+	echo ":: Error: gnome-extensions-cli is not installed. Skipping install extensions."
+	exit 1
+else
+	echo ":: Installing extensions..."
+	for extension in "${extensions[@]}"; do
+		gext install $extension
+	done
+fi
