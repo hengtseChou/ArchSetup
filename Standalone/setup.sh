@@ -24,6 +24,7 @@ apps=(
     chromium
     docker
     firefox
+    onefetch
     onlyoffice-bin
     peaclock
     rclone
