@@ -1,5 +1,8 @@
 #!/bin/bash
 apps=(
+	dconf-editor
+	file-roller
+	font-manager
 	gnome-browser-connector
 	gnome-calculator
 	gnome-control-center
@@ -9,13 +12,14 @@ apps=(
 	gnome-shell
 	gnome-terminal
 	gnome-text-editor
-	polkit-gnome
-	xdg-user-dirs-gtk
-	nautilus
-	sushi
-	file-roller
-	font-manager
+	gthumb
+	gvfs-google
 	loupe
+	menulibre
+	nautilus
+	polkit-gnome
+	sushi
+	xdg-user-dirs-gtk
 )
 
 theming=(
@@ -58,16 +62,15 @@ extensions=(
 read -p ":: Skip extensions install? (y/N): " skip_extensions
 skip_extensions=${skip_extensions:-N}
 if [[ "$skip_extensions" =~ ^([nN][oO]?|[yY][eE][sS]?)$ ]]; then
-	if ! command -v gext 2>&1 >/dev/null; then
-		echo ":: Error: gnome-extensions-cli is not installed. Skipping extensions install."
-		exit 1
-	else
-		echo ":: Installing extensions..."
-		for extension in "${extensions[@]}"; do
-			gext install $extension
-		done
-		echo ":: Restoring extensions settings..."
-		dconf load / <$PWD/extensions-settings.ini
+	sudo pacman -S --needed python-pipx --noconfirm
+	pipx ensurepath
+	pipx install gnome-extensions-cli
+	echo ":: Installing extensions..."
+	for extension in "${extensions[@]}"; do
+		gext install $extension
+	done
+	echo ":: Restoring extensions settings..."
+	dconf load / <$PWD/extensions-settings.ini
 	fi
 else
 	echo ":: Skipping extensions install."
