@@ -52,17 +52,25 @@ cd ..
 rm -rf paru
 
 if $gnome; then
+    echo ":: Setting up GNOME..."
     ./Gnome/setup.sh
+    echo ":: Done."
 fi
 if $hypr; then
+    echo ":: Setting up Hyprland..."
     ./Hypr/setup.sh
+    echo ":: Done."
 fi
+echo ":: Installing standalone apps..."
 ./Standalone/setup.sh
+echo ":: Done."
 if $conf; then
+    echo ":: Applying app config files..."
     ./Conf/setup.sh
+    echo ":: Done."
 fi
 if $scripts; then
+    echo ":: Cloning scripts into Home folder..."
     git clone https://github.com/hengtseChou/Scripts.git ~/Scripts
+    echo ":: Done."
 fi
-
-
