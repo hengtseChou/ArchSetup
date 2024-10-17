@@ -18,6 +18,7 @@ apps=(
 	menulibre
 	nautilus
 	polkit-gnome
+	seahorse
 	sushi
 	xdg-user-dirs-gtk
 )
