@@ -4,13 +4,13 @@ hypr=true
 conf=true
 scripts=true
 
-_help() {
-  echo "Usage: $0 [options]"
+_usage() {
+  echo "Usage: ./install.sh [options]"
   echo "Options:"
-  echo "  --skip-gnome: Skip GNOME apps and settings"
-  echo "  --skip-hypr: Skip Hyprland apps and settings"
-  echo "  --skip-conf: Skip app config files"
-  echo "  --skip-scripts: Skip cloning scripts"
+  echo "  --skip-gnome      Skip GNOME apps and settings"
+  echo "  --skip-hypr       Skip Hyprland apps and settings"
+  echo "  --skip-conf       Skip app config files"
+  echo "  --skip-scripts    Skip cloning scripts"
 }
 
 for arg in "$@"; do
@@ -32,12 +32,12 @@ for arg in "$@"; do
     shift
     ;;
   --help)
-    _help
+    _usage
     exit 0
     ;;
   *)
     echo "Unknown option: $arg"
-    _help
+    _usage
     exit 1
     ;;
   esac
