@@ -8,7 +8,7 @@ The script will:
 - Apply configuration for standalone apps
 - Install Useful scripts to Home Folder
 
-All parts excluding essential apps can be skipped. See `./install.sh --help`.
+All parts but essential apps can be skipped. See `./install.sh --help`.
 
 Make sure you checking out packages/settings from `setup.sh` in each subfolder and add/remove as you need before installing.
 
