@@ -57,6 +57,7 @@ extensions=(
 	caffeine@patapon.info
 	clipboard-indicator@tudmotu.com
 	dash-to-dock@micxgx.gmail.com
+	grand-theft-focus@zalckos.github.com
 	kimpanel@kde.org
 )
 
