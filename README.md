@@ -1,18 +1,27 @@
 <h1 align="center">✨ Arch Setup Script ✨</h1>
 
-The script will:
+```
+git clone https://github.com/hengtseChou/ArchSetup
+cd ArchSetup
+./install.sh
+```
+
+The install script will:
 
 - Setup a GNOME environment with some useful apps/extensions
 - Setup a Hyprland environment with pre-configured style and some useful apps (including settting up zsh and oh-my-zsh)
 - Install essential, standalone apps
 - Apply configuration for standalone apps
-- Install Useful scripts to Home Folder
+- Install useful scripts to Home Folder
 
 All parts but essential apps can be skipped. See `./install.sh --help`.
-
 Make sure you checking out packages/settings from `setup.sh` in each subfolder and add/remove as you need before installing.
 
-```
+👉️ Check Hyprland config: [Hypr](https://github.com/hengtseChou/Hypr) <br>
+👉️ Check app configurations: [Conf](https://github.com/hengtseChou/Conf) <br>
+👉️ Check scripts repo: [Scripts](https://github.com/hengtseChou/Scripts) <br>
+
+`````
 > ff
                                                  hank@archlinux
                                                  --------------
@@ -37,4 +46,4 @@ Make sure you checking out packages/settings from `setup.sh` in each subfolder a
       `++:.                           `-/+/       ├ 󰋊  ➜  25.90 GiB / 250.00 GiB (10%) - btrfs
       .`                                 `/       ├ 󰍹  ➜  2880x1800 @ 90 Hz (as 1920x1200) in 14" [Built-in]
                                                   └   ➜  [ ■■■■■----- ]52% [Discharging]
-```
+`````
