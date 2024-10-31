@@ -82,3 +82,10 @@ if [[ "$install_r" =~ ^([yY][eE][sS]?|[yY])$ ]]; then
 else
   echo ":: Skipping R and RStudio installation."
 fi
+
+read -p ":: Install Spicetify? (Y/n): " install_spicetify
+install_spicetify=${install_spicetify:-Y}
+if [[ "$install_spicetify" =~ ^([yY][eE][sS]?|[yY])$ ]]; then
+  paru -S --needed spicetify-cli
+  spicetify backup
+fi
