@@ -86,6 +86,8 @@ fi
 read -p ":: Install Spicetify? (Y/n): " install_spicetify
 install_spicetify=${install_spicetify:-Y}
 if [[ "$install_spicetify" =~ ^([yY][eE][sS]?|[yY])$ ]]; then
+  sudo chmod a+wr /opt/spotify
+  sudo chmod a+wr /opt/spotify/Apps -R
   paru -S --needed spicetify-cli
   spicetify backup
 fi
