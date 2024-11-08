@@ -53,20 +53,20 @@ rm -rf paru
 
 if $gnome; then
   echo ":: Setting up GNOME..."
-  ./Gnome/setup.sh
+  cd Gnome && ./setup.sh && cd ..
   echo ":: Done."
 fi
 if $hypr; then
   echo ":: Setting up Hyprland..."
-  ./Hypr/setup.sh
+  cd Hypr && ./setup.sh && cd ..
   echo ":: Done."
 fi
 echo ":: Installing standalone apps..."
-./Standalone/setup.sh
+cd Standalone && ./setup.sh && cd ..
 echo ":: Done."
 if $conf; then
   echo ":: Applying app config files..."
-  ./Conf/setup.sh
+  cd Conf && ./setup.sh && cd ..
   echo ":: Done."
 fi
 if $scripts; then
