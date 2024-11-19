@@ -58,19 +58,19 @@ done
 for choice in $selection; do
   case $choice in
   1)
-    cp -r $setup_dir/Gnome $HOME
+    cp -r "$setup_dir/Gnome" $HOME
     cd $HOME/Gnome
     ./setup.sh
     cd $setup_dir
     ;;
   2)
-    cp -r $setup_dir/Hyprland $HOME
-    cd $HOME/Hyprland
+    cp -r "$setup_dir/Hypr" $HOME
+    cd $HOME/Hypr
     ./setup.sh
     cd $setup_dir
     ;;
   3)
-    cp -r $setup_dir/Niri $HOME
+    cp -r "$setup_dir/Niri" $HOME
     cd $HOME/Niri
     ./setup.sh
     cd $setup_dir
