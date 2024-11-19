@@ -4,3 +4,6 @@
 [submodule "Conf"]
 	path = Conf
 	url = https://github.com/hengtseChou/Conf.git
+[submodule "Niri"]
+	path = Niri
+	url = https://github.com/hengtseChou/Niri.git
