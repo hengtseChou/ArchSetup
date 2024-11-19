@@ -41,16 +41,14 @@ echo -e "\n----- Standalone apps installation -----\n"
 echo ":: Installing apps..."
 paru -S --needed "${apps[@]}"
 echo -e ":: Done. Proceeding to the next step...\n"
-sleep 3
 
 echo ":: Installing utils..."
 paru -S --needed "${utils[@]}"
 echo -e ":: Done. Proceeding to the next step...\n"
-sleep 3
 
 read -p ":: Install fcitx5? (Y/n): " install_fcitx5
 install_fcitx5=${install_fcitx5:-Y}
-if [[ "$install_fcitx5" =~ ^([yY][eE][sS]?|[yY])$ ]]; then
+if [[ "$install_fcitx5" =~ ^([yY])$ ]]; then
   paru -S --needed fcitx5-im fcitx5-chewing fcitx5-mcbopomofo-git
   sudo update-icon-caches /usr/share/icons/*
   echo ":: Configuring fcitx5..."
@@ -78,11 +76,10 @@ else
   echo ":: Skipping fcitx5 installation"
   echo -e ":: Proceeding to the next step...\n"
 fi
-sleep 3
 
 read -p ":: Install R and RStudio? (Y/n): " install_r
 install_r=${install_r:-Y}
-if [[ "$install_r" =~ ^([yY][eE][sS]?|[yY])$ ]]; then
+if [[ "$install_r" =~ ^([yY])$ ]]; then
   paru -S --needed r gcc-fortran
   # install RStudio with the gist PKGBUILD
   git clone https://gist.github.com/9bad76d97ff17e37980cf40416fc5596.git rstudio-desktop-bin
@@ -95,11 +92,10 @@ else
   echo ":: Skipping R and RStudio installation"
   echo -e ":: Proceeding to the next step...\n"
 fi
-sleep 3
 
 read -p ":: Install Spicetify? (Y/n): " install_spicetify
 install_spicetify=${install_spicetify:-Y}
-if [[ "$install_spicetify" =~ ^([yY][eE][sS]?|[yY])$ ]]; then
+if [[ "$install_spicetify" =~ ^([yY])$ ]]; then
   sudo chmod a+wr /opt/spotify
   sudo chmod a+wr /opt/spotify/Apps -R
   paru -S --needed spicetify-cli
