@@ -1,5 +1,7 @@
 <h1 align="center">✨ Arch Setup Script ✨</h1>
 
+This setup aims to provide a consistent style across different DE/WM.
+
 ```
 git clone https://github.com/hengtseChou/ArchSetup
 cd ArchSetup
@@ -8,16 +10,17 @@ cd ArchSetup
 
 The install script will:
 
-- Setup a GNOME environment with some useful apps/extensions
-- Setup a Hyprland environment with pre-configured style and some useful apps (including settting up zsh and oh-my-zsh)
+- Setting up one or more DE/WM, including GNOME/Hyprland/Niri
 - Install essential, standalone apps
-- Apply configuration for standalone apps
+- Apply configuration for system/standalone apps
 - Install useful scripts to Home Folder
 
-All parts but essential apps can be skipped. See `./install.sh --help`.
-Make sure you checking out packages/settings from `setup.sh` in each subfolder and add/remove as you need before installing.
+Yuo can also skip the part if you don't want them.
+
+Make sure you checking out packages/settings from `setup.sh` in each subfolder modify as you need before installing.
 
 👉️ Check Hyprland config: [Hypr](https://github.com/hengtseChou/Hypr) <br>
+👉️ Check Niri config: [Hypr](https://github.com/hengtseChou/Niri) <br>
 👉️ Check app configurations: [Conf](https://github.com/hengtseChou/Conf) <br>
 👉️ Check scripts repo: [Scripts](https://github.com/hengtseChou/Scripts) <br>
 
