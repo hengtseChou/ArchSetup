@@ -4,21 +4,6 @@ if ! command -v paru 2>&1 >/dev/null; then
   exit 1
 fi
 
-utils=(
-  btop
-  github-cli
-  go
-  gotop-bin
-  htop
-  ifuse
-  man-db
-  ncdu
-  npm
-  rust
-  speech-dispatcher
-  trash-cli
-)
-
 apps=(
   btrfs-assistant
   chromium
@@ -35,10 +20,33 @@ apps=(
   zotero-bin
 )
 
-echo ":: Installing utils..."
-paru -S --needed "${utils[@]}"
+utils=(
+  btop
+  github-cli
+  go
+  gotop-bin
+  htop
+  ifuse
+  man-db
+  ncdu
+  npm
+  rate-mirrors-bin
+  rust
+  speech-dispatcher
+  trash-cli
+)
+
+echo -e "\n----- Standalone apps installation -----\n"
+
 echo ":: Installing apps..."
 paru -S --needed "${apps[@]}"
+echo -e ":: Done. Proceeding to the next step...\n"
+sleep 3
+
+echo ":: Installing utils..."
+paru -S --needed "${utils[@]}"
+echo -e ":: Done. Proceeding to the next step...\n"
+sleep 3
 
 read -p ":: Install fcitx5? (Y/n): " install_fcitx5
 install_fcitx5=${install_fcitx5:-Y}
@@ -65,9 +73,12 @@ if [[ "$install_fcitx5" =~ ^([yY][eE][sS]?|[yY])$ ]]; then
     echo "gtk-im-module=fcitx" >>~/.config/gtk-4.0/settings.ini
   fi
   gsettings set org.gnome.settings-daemon.plugins.xsettings overrides "{'Gtk/IMModule':<'fcitx'>}"
+  echo -e ":: Done. Proceeding to the next step...\n"
 else
-  echo ":: Skipping fcitx5 installation."
+  echo ":: Skipping fcitx5 installation"
+  echo -e ":: Proceeding to the next step...\n"
 fi
+sleep 3
 
 read -p ":: Install R and RStudio? (Y/n): " install_r
 install_r=${install_r:-Y}
@@ -79,9 +90,12 @@ if [[ "$install_r" =~ ^([yY][eE][sS]?|[yY])$ ]]; then
   makepkg -si
   cd ..
   rm -rf rstudio-desktop-bin
+  echo -e ":: Done. Proceeding to the next step...\n"
 else
-  echo ":: Skipping R and RStudio installation."
+  echo ":: Skipping R and RStudio installation"
+  echo -e ":: Proceeding to the next step...\n"
 fi
+sleep 3
 
 read -p ":: Install Spicetify? (Y/n): " install_spicetify
 install_spicetify=${install_spicetify:-Y}
@@ -89,5 +103,10 @@ if [[ "$install_spicetify" =~ ^([yY][eE][sS]?|[yY])$ ]]; then
   sudo chmod a+wr /opt/spotify
   sudo chmod a+wr /opt/spotify/Apps -R
   paru -S --needed spicetify-cli
-  spicetify backup
+  spicetify backup apply
+  echo ":: Done."
+else
+  echo ":: Skipping Spicetify installation"
 fi
+
+echo -e "\n:: Standalone apps installation completed. \n"
