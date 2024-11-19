@@ -60,25 +60,24 @@ skip_theming=${skip_theming:-N}
 if [[ "$skip_theming" =~ ^([yY])$ ]]; then
   echo ":: Skipping theme installation"
   echo -e ":: Proceeding to the next step...\n"
-  sleep 3
 else
   echo ":: Installing theme..."
   paru -S --needed "${theming[@]}"
   gsettings set org.gnome.desktop.interface gtk-theme 'Yaru'
   gsettings set org.gnome.desktop.interface icon-theme 'Yaru'
   echo -e ":: Done. Proceeding to the next step...\n"
-  sleep 3
 fi
+sleep 3
 
 echo ":: Restoring base settings..."
 dconf load / <$PWD/base-settings.ini
 echo -e ":: Done. Proceeding to the next step...\n"
 sleep 3
 
-read -p ":: Skip extensions install? (y/N): " skip_extensions
+read -p ":: Skip extensions installation? (y/N): " skip_extensions
 skip_extensions=${skip_extensions:-N}
 if [[ "$skip_extensions" =~ ^([yY])$ ]]; then
-  echo -e ":: Skipping extensions install\n"
+  echo -e ":: Skipping extensions installation"
 else
   sudo pacman -S --needed python-pipx
   pipx ensurepath
@@ -89,7 +88,7 @@ else
   done
   echo ":: Restoring extensions settings..."
   dconf load / <$PWD/extensions-settings.ini
-  echo -e ":: Done.\n"
+  echo -e ":: Done."
 fi
 
-echo -e ":: GNOME configuration completed. "
+echo -e "\n:: GNOME configuration completed. \n"
