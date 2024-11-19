@@ -104,10 +104,10 @@ else
   gsettings set org.gnome.desktop.interface icon-theme 'Yaru'
   echo -e ":: Done. Proceeding to the next step...\n"
 fi
-sleep 3
 
 echo ":: Restoring base settings..."
 dconf load / <$PWD/base-settings.ini
+sleep 3
 echo -e ":: Done. Proceeding to the next step...\n"
 
 read -p ":: Skip extensions installation? (y/N): " skip_extensions
