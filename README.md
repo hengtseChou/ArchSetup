@@ -1,6 +1,6 @@
 <h1 align="center">✨ Arch Setup Script ✨</h1>
 
-This setup aims to provide a consistent style across different DE/WM.
+The key feature of this setup is to provide a consistent style and experience across multiple DE/WM.
 
 ```
 git clone https://github.com/hengtseChou/ArchSetup
@@ -17,7 +17,7 @@ The install script will:
 
 Yuo can also skip the part if you don't want them.
 
-Make sure you checking out packages/settings from `setup.sh` in each subfolder modify as you need before installing.
+Make sure you checking out packages/settings from `setup.sh` in each subfolder and modify as you need before installing.
 
 👉️ Check Hyprland config: [Hypr](https://github.com/hengtseChou/Hypr) <br>
 👉️ Check Niri config: [Hypr](https://github.com/hengtseChou/Niri) <br>
