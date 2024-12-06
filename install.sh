@@ -1,6 +1,24 @@
 #!/bin/bash
 set -e
 
+msg() {
+  if [ "$1" == "-n" ]; then
+    shift
+    printf "\033[s\033[38;2;117;138;155m%s\033[0m\n" "$1"
+  else
+    printf "\033[s\033[38;2;117;138;155m%s\033[0m" "$1"
+  fi
+}
+msg_update() {
+  printf "\033[u\033[2K\r\033[38;2;117;138;155m%s\033[0m\n" "$1"
+}
+msg_error() {
+  printf "\033[38;2;156;22;37m%s\033[0m\n" "$1"
+}
+export -f msg
+export -f msg_update
+export -f msg_error
+
 deps=("gum" "figlet")
 missing_deps=()
 for dep in "${deps[@]}"; do
@@ -9,7 +27,8 @@ for dep in "${deps[@]}"; do
   fi
 done
 if [[ ${#missing_deps[@]} -gt 0 ]]; then
-  read -p "Install dependencies for the script? (Y/n): " install_deps
+  msg "Install dependencies for the script? (Y/n): "
+  read install_deps
   install_deps=${install_deps:-Y}
   if [[ "$install_deps" =~ ^[Yy]$ ]]; then
     sudo pacman -Syu --needed "${missing_deps[@]}"
@@ -58,8 +77,6 @@ export GUM_CHOOSE_CURSOR_FOREGROUND="${colors[2]}"
 export GUM_INPUT_HEADER_FOREGROUND="${colors[7]}"
 export GUM_INPUT_PROMPT_FOREGROUND="${colors[2]}"
 export GUM_INPUT_CURSOR_FOREGROUND="${colors[2]}"
-export GUM_CONFIRM_PROMPT_FOREGROUND="${colors[7]}"
-export GUM_CONFIRM_SELECTED_BACKGROUND="${colors[2]}"
 export GUM_SPIN_SPINNER_FOREGROUND="${colors[2]}"
 export GUM_SPIN_TITLE_FOREGROUND="${colors[7]}"
 
@@ -114,79 +131,89 @@ printf "\n"
 
 # ------------------------------------- base setup ------------------------------------- #
 
-# if we want a folder thats just for configs
-config_path=""
-while true; do
-  create_config_folder=$(gum choose --header "Create a dedicated config folder under $HOME?" "Yes" "No")
-  if [[ "$create_config_folder" == "Yes" ]]; then
-    folder=$(gum input --header "Folder name:")
-    if [[ -n "$folder" && "$folder" =~ ^[a-zA-Z0-9_-]+$ ]]; then
-      if [[ -d "$HOME/$folder" ]]; then
-        overwrite=$(gum choose --header "Folder already exists. Overwrite?" "Yes" "No")
-        if [[ "$overwrite" == "Yes" ]]; then
-          rm -rf "$HOME/$folder"
-          mkdir "$HOME/$folder"
-          config_path="$HOME/$folder"
-          break
-        else
-          gum style --foreground "#9c1625" "Folder $folder already exists. Try again."
-        fi
-      else
-        mkdir "$HOME/$folder"
-        config_path="$HOME/$folder"
-        break
-      fi
+# # if we want a folder thats just for configs
+create_config_folder=$(gum choose --header "Create a dedicated config folder ~/Conf?" "Yes" "No")
+if [[ "$create_config_folder" == "Yes" ]]; then
+  if [[ -d "$HOME/Conf" ]]; then
+    overwrite=$(gum choose --header "~/Conf already exists. Overwrite?" "Yes" "No")
+    if [[ "$overwrite" == "Yes" ]]; then
+      rm -rf "$HOME/Conf"
+      mkdir "$HOME/Conf"
+      use_config_folder=true
     else
-      gum style --foreground "#9c1625" "Folder name cannot be empty or contain special characters. Try again."
+      msg -n "Falling back to symlink config files directly from this repo."
     fi
   else
-    break
+    mkdir "$HOME/Conf"
+    use_config_folder=true
   fi
-done
-
-cd base
-if [[ -n "$config_path" ]]; then
-  cp -r ./config/* "$config_path"
+else
+  msg -n "Falling back to symlink config files directly from this repo."
+  use_config_folder=false
 fi
-bash ./setup.sh $aur "$config_path"
+
+if [[ "$use_config_folder" == "true" ]]; then
+  cp -r ./base/config/* "$HOME/Conf"
+fi
+bash ./base/setup.sh $aur $use_config_folder
 
 # -------------------------------- desktop environments -------------------------------- #
 
-# validate_input() {
-#   for choice in $selection; do
-#     if ! [[ "$choice" =~ ^[1-3]$ ]]; then
-#       gum style --foreground "#9c1625" "Invalid input $selection. Please try again."
-#       return 1
-#     fi
-#   done
-#   return 0
-# }
-# display_options() {
-#   echo "Pick one or more DE/WM with pre-configured setup:"
-#   echo "   1) GNOME"
-#   echo "   2) Hyprland"
-#   echo "   3) niri"
-# }
-# declare -A setups=(
-#   ["1"]="GNOME"
-#   ["2"]="Hyprland"
-#   ["3"]="niri"
-# )
-# display_options
-# while true; do
-#   selection=$(gum input --header "Enter a selection (default=1): ")
-#   if [[ -z "$selection" ]]; then
-#     selection="1"
-#   fi
-#   if validate_input; then
-#     selected_setups=()
-#     for choice in $selection; do
-#       selected_setups+=("${setups[$choice]}")
-#     done
-#     selected_setups=$(IFS=", " echo "${selected_setups[*]}")
-#     break
-#   fi
-# done
-# gum style --foreground "${colors[2]}" "Selected DE/WM: $selected_setups"
+validate_input() {
+  for choice in $selection; do
+    if ! [[ "$choice" =~ ^[1-3]$ ]]; then
+      msg_error "Invalid input $selection. Please try again."
+      return 1
+    fi
+  done
+  return 0
+}
+display_options() {
+  echo "Pick one or more DE/WM with pre-configured setup:"
+  echo "   1) GNOME"
+  echo "   2) Hyprland"
+  echo "   3) niri"
+}
+declare -A setups=(
+  ["1"]="GNOME"
+  ["2"]="Hyprland"
+  ["3"]="niri"
+)
+display_options
+while true; do
+  selection=$(gum input --header "Enter a selection (default=1): ")
+  if [[ -z "$selection" ]]; then
+    selection="1"
+  fi
+  if validate_input; then
+    selected_setups=()
+    for choice in $selection; do
+      selected_setups+=("${setups[$choice]}")
+    done
+    selected_setups=$(IFS=", " echo "${selected_setups[*]}")
+    break
+  fi
+done
+msg -n "Selected DE/WM: $selected_setups"
 
+for choice in $selection; do
+  case $choice in
+  "1")
+    figlet "GNOME" -f smslant
+    bash ./GNOME/setup.sh $aur $use_config_folder
+    ;;
+  "2")
+    figlet "Hyprland" -f smslant
+    bash ./Hyprland/setup.sh $aur $use_config_folder
+    ;;
+  "3")
+    figlet "niri" -f smslant
+    bash ./niri/setup.sh $aur $use_config_folder
+    ;;
+  *)
+    msg_error "Unknown selection $choice. Exiting..."
+    exit 1
+    ;;
+  esac
+done
 # ---------------------------------------- extra --------------------------------------- #

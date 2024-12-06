@@ -1,29 +1,25 @@
 #!/bin/bash
 aur="$1"
-if [[ -n "$2" ]]; then
-  config_folder="$2"
+if [[ "$2" == "true" ]]; then
+  config_folder="$HOME/Conf"
 else
-  config_folder="$PWD/config"
+  config_folder="$PWD/base/config"
 fi
 
-
-msg() {
-  if [ "$1" == "-n" ]; then
-    shift
-    printf "\033[s\033[38;2;117;138;155m%s\033[0m\n" "$1"
-  else
-    printf "\033[s\033[38;2;117;138;155m%s\033[0m" "$1"
-  fi
-}
-msg_update() {
-  printf "\033[u\033[2K\r\033[38;2;117;138;155m%s\033[0m\n" "$1"
-}
-
 pkgs=(
+  eza
+  fastfetch
   fontconfig
+  fzf
   greetd-tuigreetd
+  ifuse
+  man-db
   nano
+  power-profiles-daemon
   starship
+  tealdeer
+  xdg-user-dirs
+  zoxide
   zsh
 )
 fonts=(
@@ -67,11 +63,11 @@ fi
 printf "\n"
 
 msg "Setting up fontconfig..."
-bash -c "./../symlink.sh '$config_folder/fontconfig' --to-config; fc-cache -f" >/dev/null
+bash -c "./symlink.sh '$config_folder/fontconfig' --to-config; fc-cache -f" >/dev/null
 msg_update "Setting up fontconfig: completed"
 
 msg -n "Setting up git..."
-bash -c "./../symlink.sh '$config_folder/git/.gitconfig' --to-home" >/dev/null
+bash -c "./symlink.sh '$config_folder/git/.gitconfig' --to-home" >/dev/null
 git_username=$(gum input --header "Enter your username for git:")
 git_email=$(gum input --header "Enter your email for git:")
 git config --global user.name "$git_username"
@@ -89,7 +85,7 @@ bash -c "sudo cp $config_folder/makepkg/makepkg.conf /etc/makepkg.conf"
 msg_update "Setting up makepkg: completed"
 
 msg "Setting up nano..."
-bash -c "./../symlink.sh '$config_folder/nano/.nanorc' --to-home" >/dev/null
+bash -c "./symlink.sh '$config_folder/nano/.nanorc' --to-home" >/dev/null
 msg_update "Setting up nano: completed"
 
 msg "Setting up pacman..."
@@ -98,10 +94,18 @@ bash -c "sudo cp $config_folder/pacman/pacman.conf /etc/pacman.conf"
 msg_update "Setting up pacman: completed"
 
 msg "Setting up starship..."
-bash -c "./../symlink.sh '$config_folder/starship/starship.toml' --to-config" >/dev/null
+bash -c "./symlink.sh '$config_folder/starship/starship.toml' --to-config" >/dev/null
 msg_update "Setting up starship: completed"
 
+msg "Setting up tealdeer..."
+tldr --update >/dev/null
+msg_update "Setting up tealdeer: completed"
+
+msg "Setting up xdg-user-dirs..."
+xdg-user-dirs-update
+msg_update "Setting up xdg-user-dirs: completed"
+
 msg -n "Setting up zsh..."
-bash -c "./../symlink.sh '$config_folder/zsh/.zshrc' --to-home" >/dev/null
+bash -c "./symlink.sh '$config_folder/zsh/.zshrc' --to-home" >/dev/null
 chsh -s /bin/zsh
 msg -n "Setting up zsh: completed"
