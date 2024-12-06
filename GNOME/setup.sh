@@ -1,20 +1,12 @@
 #!/bin/bash
-if ! command -v paru 2>&1 >/dev/null; then
-  echo ":: Error: paru is not installed. Exiting."
-  exit 1
-fi
+aur="$1"
 
 apps=(
-  fastfetch
-  fontconfig
-  starship
-  zsh
-)
-
-gnome_apps=(
   dconf-editor
   file-roller
+  firefox
   font-manager
+  impression
   gnome-browser-connector
   gnome-calculator
   gnome-control-center
@@ -29,116 +21,77 @@ gnome_apps=(
   loupe
   menulibre
   nautilus
-  polkit-gnome
-  seahorse
   sushi
 )
+formatted_apps=()
+for app in "${apps[@]}"; do
+  formatted_apps+=("   - $app")
+done
 
-utils=(
-  eza
-  fzf
-  ifuse
-  networkmanager
-  power-profiles-daemon
-  udiskie
-  xdg-user-dirs-gtk
-  zoxide
-)
+gum style "Installing GNOME shell and applications:" "${formatted_apps[@]}"
+install_apps=$(gum choose --header "Proceed?" "Yes" "No")
+if [[ "$install_apps" == "Yes" ]]; then
+  sudo -v
+  gum spin --title "Running $aur..." -- sudo $aur -S --needed --noconfirm "${pkgs[@]}"
+  msg -n "Completed"
+else
+  exit 1
+fi
+printf "\n"
 
-theming=(
-  yaru-gtk-theme
-  yaru-icon-theme
-)
+msg "Setting up wm-preferences..."
+dconf load / <./GNOME/wm-preferences.ini
+msg_update "Setting up wm-preferences: completed"
 
-fonts=(
-  ttf-ubuntu-font-family
-  ttf-ubuntu-mono-nerd
-)
+msg "Setting up keybindings..."
+dconf load / <./GNOME/keybindings.ini
+msg_update "Setting up keybindings: completed"
+
+msg "Setting up terminal theme..."
+sed -i "s/\$DEFAULT/$(gsettings get org.gnome.Terminal.ProfilesList default)/g" ./GNOME/terminal-theme.ini
+dconf load / <./GNOME/terminal-theme.ini
+msg_update "Setting up terminal theme: completed"
+printf "\n"
 
 extensions=(
   AlphabeticalAppGrid@stuarthayhurst
   blur-my-shell@aunetx
-  burn-my-windows@schneegans.github.com
   caffeine@patapon.info
   clipboard-indicator@tudmotu.com
-  dash-to-dock@micxgx.gmail.com
+  gnome-ui-tune@itstime.tech
   grand-theft-focus@zalckos.github.com
   kimpanel@kde.org
 )
+export EXTENSIONS="${extensions[*]}"
+formatted_exts=()
+for ext in "${extensions[@]}"; do
+  formatted_exts+=("   - ${ext%@*}")
+done
 
-echo -e "\n----- GNOME configuration script -----\n"
-echo ":: Installing apps..."
-paru -S --needed "${apps[@]}"
-echo -e ":: Done. Proceeding to the next step...\n"
-
-echo ":: Installing GNOME apps..."
-paru -S --needed "${gnome_apps[@]}"
-echo -e ":: Done. Proceeding to the next step...\n"
-
-echo ":: Installing utils..."
-paru -S --needed "${utils[@]}"
-echo -e ":: Done. Proceeding to the next step...\n"
-
-echo ":: Installing fonts..."
-paru -S --needed "${fonts[@]}"
-echo -e ":: Done. Proceeding to the next step...\n"
-
-if [[ "$SHELL" != "/bin/zsh" ]]; then
-  echo ":: Setting up default shell..."
-  chsh -s /bin/zsh
-  echo -e ":: Done. Proceeding to the next step...\n"
-else
-  echo ":: Setting up default shell: Already set to zsh"
-  echo -e ":: Proceeding to the next step...\n"
-fi
-
-read -p ":: Skip theming? (y/N): " skip_theming
-skip_theming=${skip_theming:-N}
-if [[ "$skip_theming" =~ ^([yY])$ ]]; then
-  echo ":: Skipping theme installation"
-  echo -e ":: Proceeding to the next step...\n"
-else
-  echo ":: Installing theme..."
-  paru -S --needed "${theming[@]}"
-  gsettings set org.gnome.desktop.interface gtk-theme 'Yaru'
-  gsettings set org.gnome.desktop.interface icon-theme 'Yaru'
-  echo -e ":: Done. Proceeding to the next step...\n"
-fi
-
-echo ":: Restoring base settings..."
-dconf load / <$PWD/base-settings.ini
-sleep 3
-echo -e ":: Done. Proceeding to the next step...\n"
-
-read -p ":: Skip extensions installation? (y/N): " skip_extensions
-skip_extensions=${skip_extensions:-N}
-if [[ "$skip_extensions" =~ ^([yY])$ ]]; then
-  echo -e ":: Skipping extensions installation"
-else
-  sudo pacman -S --needed python-pipx
-  pipx ensurepath
-  pipx install gnome-extensions-cli
-  echo ":: Installing extensions..."
-  for extension in "${extensions[@]}"; do
-    gext install $extension
+gum style "Installing GNOME extensions:" "${formatted_exts[@]}"
+install_apps=$(gum choose --header "Proceed?" "Yes, install extensions" "No, skip this step")
+if [[ "$install_apps" == "Yes, install extensions" ]]; then
+  msg -n "Installing GNOME extensions requires python-pipx and jq"
+  sudo -v
+  gum spin --title "Installing dependencies..." -- $aur -S --needed --noconfirm python-pipx jq
+  gum spin --title "Installing gnome-extensions-cli..." -- pipx install gnome-extensions-cli
+  export PATH="$HOME/.local/bin:$PATH"
+  gum spin --title "Installing GNOME extensions..." -- bash -c '
+  IFS=" " read -r -a extensions <<< "$EXTENSIONS"
+  shell_version=$(gnome-shell --version | cut -d" " -f3)
+  for uuid in "${extensions[@]}"; do
+    info_json=$(curl -sS "https://extensions.gnome.org/extension-info/?uuid=$uuid&shell_version=$shell_version")
+    download_url=$(echo "$info_json" | jq ".download_url" --raw-output)
+    gnome-extensions install "https://extensions.gnome.org$download_url"
   done
-  echo ":: Restoring extensions settings..."
-  dconf load / <$PWD/extensions-settings.ini
-  echo ":: Done."
+  '
+  msg -n "Installing GNOME extensions: completed"
+  extensions="[$(printf "'%s'," "${extensions[@]}" | sed 's/,$//')]"
+  gsettings set org.gnome.shell enabled-extensions "$extensions"
+
+  msg -n "Setting up extensions preferences..."
+  dconf load / <./GNOME/extensions-settings.ini
+  msg_update "Setting up extensions preferences: completed"
+else
+  msg -n "Skipping GNOME extensions installation"
 fi
-
-echo ":: Setting up configuration files..."
-echo "" && sleep 0.5
-sudo systemctl enable greetd.service
-sudo cp ./greetd/config.toml /etc/greetd/config.toml
-echo ":: Copied $PWD/greetd/config.toml to /etc/greetd/config.toml"
-echo "" && sleep 0.5
-
-./symlink.sh $PWD/starship/starship.toml --to-config
-echo "" && sleep 0.5
-./symlink.sh $PWD/zsh --to-config
-echo "" && sleep 0.5
-./symlink.sh $PWD/zsh/.zshrc --to-home
-echo "" && sleep 0.5
-
-echo -e "\n:: GNOME configuration completed. \n"
