@@ -4,12 +4,6 @@
 	untrack = update-index --assume-unchanged
 	track = update-index --no-assume-unchanged
 	retrack = update-index --no-assume-unchanged
-[credential "https://github.com"]
-	helper = 
-	helper = !/usr/bin/gh auth git-credential
-[credential "https://gist.github.com"]
-	helper = 
-	helper = !/usr/bin/gh auth git-credential
 [push]
 	autoSetupRemote = true
 [core]
@@ -19,6 +13,3 @@
 [pager]
 	branch = false
 	diff = false
-[user]
-	name = hengtseChou
-	email = hankthedev@gmail.com
