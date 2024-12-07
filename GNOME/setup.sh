@@ -129,5 +129,6 @@ if [[ "$install_apps" == "Yes, install extensions" ]]; then
 else
   msg -n "Skipping GNOME extensions"
 fi
-msg -n "GNOME setup all complete"
+
+msg -n "GNOME setup all completed"
 printf "\n"
