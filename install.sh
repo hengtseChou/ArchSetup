@@ -84,11 +84,11 @@ figlet "Arch Setup Script" -f smslant
 print_color_palette
 
 aur=$(gum choose "paru" "yay" "aura" "trizen" --header "Choose your AUR helper:")
-gum style --foreground "${colors[2]}" "Selected AUR helper: $aur"
+msg -n "Selected AUR helper: $aur"
 case $aur in
 "paru")
   if ! command -v paru 2>&1 >/dev/null; then
-    gum style --foreground "${colors[2]}" "paru is not installed. Installing now..."
+    msg -n "paru is not installed. Installing now..."
     sudo pacman -S --needed git base-devel
     git clone https://aur.archlinux.org/paru.git
     cd paru
@@ -98,7 +98,7 @@ case $aur in
   ;;
 "yay")
   if ! command -v yay 2>&1 >/dev/null; then
-    gum style --foreground "${colors[2]}" "yay is not installed. Installing now..."
+    msg -n "yay is not installed. Installing now..."
     sudo pacman -S --needed git base-devel
     git clone https://aur.archlinux.org/yay.git
     cd yay
@@ -108,7 +108,7 @@ case $aur in
   ;;
 "aura")
   if ! command -v aura 2>&1 >/dev/null; then
-    gum style --foreground "${colors[2]}" "aura is not installed. Installing now..."
+    msg -n "aura is not installed. Installing now..."
     sudo pacman -S --needed git base-devel
     git clone https://aur.archlinux.org/aura.git
     cd aura
@@ -118,7 +118,7 @@ case $aur in
   ;;
 "trizen")
   if ! command -v trizen 2>&1 >/dev/null; then
-    gum style --foreground "${colors[2]}" "trizen is not installed. Installing now..."
+    msg -n "trizen is not installed. Installing now..."
     sudo pacman -S --needed git base-devel
     git clone https://aur.archlinux.org/trizen.git
     cd trizen
@@ -195,20 +195,45 @@ while true; do
   fi
 done
 msg -n "Selected DE/WM: $selected_setups"
+printf "\n"
 
 for choice in $selection; do
   case $choice in
   "1")
     figlet "GNOME" -f smslant
-    bash ./GNOME/setup.sh $aur $use_config_folder
+    bash ./GNOME/setup.sh $aur
     ;;
   "2")
     figlet "Hyprland" -f smslant
     bash ./Hyprland/setup.sh $aur $use_config_folder
     ;;
   "3")
+    create_niri_folder=$(gum choose --header "Create a dedicated niri folder ~/Niri?" "Yes" "No")
+    if [[ "$create_niri_folder" == "Yes" ]]; then
+      if [[ -d "$HOME/Niri" ]]; then
+        overwrite=$(gum choose --header "~/Niri already exists. Overwrite?" "Yes" "No")
+        if [[ "$overwrite" == "Yes" ]]; then
+          rm -rf "$HOME/Niri"
+          mkdir "$HOME/Niri"
+          use_niri_folder=true
+        else
+          msg -n "Falling back to symlink config files directly from this repo."
+        fi
+      else
+        mkdir "$HOME/Niri"
+        use_niri_folder=true
+      fi
+    else
+      msg -n "Falling back to symlink config files directly from this repo."
+      use_niri_folder=false
+    fi
+
+    if [[ "$use_niri_folder" == "true" ]]; then
+      cp -r ./niri/*/ "$HOME/Niri"
+    fi
+
     figlet "niri" -f smslant
-    bash ./niri/setup.sh $aur $use_config_folder
+    bash ./niri/setup.sh $aur $use_niri_folder
     ;;
   *)
     msg_error "Unknown selection $choice. Exiting..."
