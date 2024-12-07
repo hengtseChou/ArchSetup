@@ -9,6 +9,7 @@ fi
 pkgs=(
   eza
   fastfetch
+  fd
   fontconfig
   fzf
   greetd-tuigreetd
@@ -109,5 +110,6 @@ msg -n "Setting up zsh..."
 bash -c "./symlink.sh '$config_folder/zsh/.zshrc' --to-home" >/dev/null
 chsh -s /bin/zsh
 msg -n "Setting up zsh: completed"
-msg -n "Base setup all complete"
+
+msg -n "Base setup all completed"
 printf "\n"
