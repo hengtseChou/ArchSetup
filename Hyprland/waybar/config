@@ -1,0 +1,30 @@
+{
+  "layer": "top",
+  "margin-top": 0,
+  "margin-bottom": 0,
+  "margin-left": 0,
+  "margin-right": 0,
+  "spacing": 0,
+  "include": [
+    "$HYPRCONF/waybar/modules.jsonc"
+  ],
+  "modules-left": [
+    "hyprland/workspaces",
+    "custom/media"
+  ],
+  "modules-center": [
+    "hyprland/window"
+  ],
+  "modules-right": [
+    "custom/updates",
+    "backlight",
+    "pulseaudio",
+    "battery",
+    "network",
+    "cpu",
+    "memory",
+    "power-profiles-daemon",
+    "custom/hypridle",
+    "clock"
+  ]
+}
