@@ -18,6 +18,28 @@ msg_error() {
 export -f msg
 export -f msg_update
 export -f msg_error
+create_dedicated_folder() {
+  create=$(gum choose --header "Create a dedicated config folder ~/$1?" "Yes" "No")
+  if [[ "$create" == "Yes" ]]; then
+    if [[ -d "$HOME/$1" ]]; then
+      overwrite=$(gum choose --header "~/$1 already exists. Overwrite?" "Yes" "No")
+      if [[ "$overwrite" == "Yes" ]]; then
+        rm -rf "$HOME/$1"
+        mkdir "$HOME/$1"
+        return 0
+      else
+        msg -n "Falling back to symlink config files directly from this repo."
+        return 1
+      fi
+    else
+      mkdir "$HOME/$1"
+      return 0
+    fi
+  else
+    msg -n "Falling back to symlink config files directly from this repo."
+    return 1
+  fi
+}
 
 deps=("gum" "figlet")
 missing_deps=()
@@ -131,27 +153,12 @@ printf "\n"
 
 # ------------------------------------- base setup ------------------------------------- #
 
-# # if we want a folder thats just for configs
-create_config_folder=$(gum choose --header "Create a dedicated config folder ~/Conf?" "Yes" "No")
-if [[ "$create_config_folder" == "Yes" ]]; then
-  if [[ -d "$HOME/Conf" ]]; then
-    overwrite=$(gum choose --header "~/Conf already exists. Overwrite?" "Yes" "No")
-    if [[ "$overwrite" == "Yes" ]]; then
-      rm -rf "$HOME/Conf"
-      mkdir "$HOME/Conf"
-      use_config_folder=true
-    else
-      msg -n "Falling back to symlink config files directly from this repo."
-    fi
-  else
-    mkdir "$HOME/Conf"
-    use_config_folder=true
-  fi
+# if we want a folder thats just for configs
+if create_dedicated_folder "Conf"; then
+  use_config_folder="true"
 else
-  msg -n "Falling back to symlink config files directly from this repo."
-  use_config_folder=false
+  use_config_folder="false"
 fi
-
 if [[ "$use_config_folder" == "true" ]]; then
   cp -r ./base/config/* "$HOME/Conf"
 fi
@@ -208,24 +215,10 @@ for choice in $selection; do
     bash ./Hyprland/setup.sh $aur $use_config_folder
     ;;
   "3")
-    create_niri_folder=$(gum choose --header "Create a dedicated niri folder ~/Niri?" "Yes" "No")
-    if [[ "$create_niri_folder" == "Yes" ]]; then
-      if [[ -d "$HOME/Niri" ]]; then
-        overwrite=$(gum choose --header "~/Niri already exists. Overwrite?" "Yes" "No")
-        if [[ "$overwrite" == "Yes" ]]; then
-          rm -rf "$HOME/Niri"
-          mkdir "$HOME/Niri"
-          use_niri_folder=true
-        else
-          msg -n "Falling back to symlink config files directly from this repo."
-        fi
-      else
-        mkdir "$HOME/Niri"
-        use_niri_folder=true
-      fi
+    if create_dedicated_folder "Niri"; then
+      use_niri_folder="true"
     else
-      msg -n "Falling back to symlink config files directly from this repo."
-      use_niri_folder=false
+      use_niri_folder="false"
     fi
 
     if [[ "$use_niri_folder" == "true" ]]; then
