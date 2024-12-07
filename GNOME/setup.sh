@@ -1,12 +1,11 @@
 #!/bin/bash
 aur="$1"
 
-apps=(
-  dconf-editor
-  file-roller
+# -------------------------------------- core apps ------------------------------------- #
+
+core_apps=(
+  evince
   firefox
-  font-manager
-  impression
   gnome-browser-connector
   gnome-calculator
   gnome-control-center
@@ -16,23 +15,20 @@ apps=(
   gnome-shell
   gnome-terminal
   gnome-text-editor
-  gthumb
-  gvfs-google
   loupe
-  menulibre
   nautilus
   sushi
 )
-formatted_apps=()
+formatted_core_apps=()
 for app in "${apps[@]}"; do
-  formatted_apps+=("   - $app")
+  formatted_core_apps+=("   - $app")
 done
 
-gum style "Installing GNOME shell and applications:" "${formatted_apps[@]}"
-install_apps=$(gum choose --header "Proceed?" "Yes" "No")
-if [[ "$install_apps" == "Yes" ]]; then
+gum style "Installing GNOME shell and core applications..." "${formatted_core_apps[@]}"
+install_core_apps=$(gum choose --header "Proceed?" "Yes" "No (exit)")
+if [[ "$install_core_apps" == "Yes" ]]; then
   sudo -v
-  gum spin --title "Running $aur..." -- sudo $aur -S --needed --noconfirm "${pkgs[@]}"
+  gum spin --title "Running $aur..." -- sudo $aur -S --needed --noconfirm "${core_apps[@]}"
   msg -n "Completed"
 else
   exit 1
@@ -53,6 +49,43 @@ dconf load / <./GNOME/terminal-theme.ini
 msg_update "Setting up terminal theme: completed"
 printf "\n"
 
+# ------------------------------------- extra apps ------------------------------------- #
+
+extra_apps=(
+  dconf-editor
+  font-manager
+  file-roller
+  gthumb
+  gvfs-google
+  impression
+  menulibre
+  nautilus-open-any-terminal
+  turtle
+)
+formatted_extra_apps=()
+for app in "${apps[@]}"; do
+  formatted_extra_apps+=("   - $app")
+done
+gum style "Installing some GNOME extra applications..." "${formatted_extra_apps[@]}"
+install_extra_apps=$(gum choose --header "Proceed?" "Yes" "No, skip this step")
+if [[ "$install_extra_apps" == "Yes" ]]; then
+  sudo -v
+  gum spin --title "Running $aur..." -- sudo $aur -S --needed --noconfirm "${extra_apps[@]}"
+  msg -n "Completed"
+else
+  msg -n "Skipping GNOME extra allpications"
+fi
+printf "\n"
+
+msg "Setting up nautilus-open-any-terminal..."
+gsettings set com.github.stunkymonkey.nautilus-open-any-terminal terminal alacritty
+gsettings set com.github.stunkymonkey.nautilus-open-any-terminal keybindings '<Ctrl><Alt>t'
+gsettings set com.github.stunkymonkey.nautilus-open-any-terminal new-tab true
+gsettings set com.github.stunkymonkey.nautilus-open-any-terminal flatpak system
+msg_update "Setting up nautilus-open-any-terminal: completed"
+
+# ------------------------------------- extensions ------------------------------------- #
+
 extensions=(
   AlphabeticalAppGrid@stuarthayhurst
   blur-my-shell@aunetx
@@ -68,13 +101,13 @@ for ext in "${extensions[@]}"; do
   formatted_exts+=("   - ${ext%@*}")
 done
 
-gum style "Installing GNOME extensions:" "${formatted_exts[@]}"
-install_apps=$(gum choose --header "Proceed?" "Yes, install extensions" "No, skip this step")
+gum style "Installing some GNOME extensions..." "${formatted_exts[@]}"
+install_apps=$(gum choose --header "Proceed?" "Yes" "No, skip this step")
 if [[ "$install_apps" == "Yes, install extensions" ]]; then
   msg -n "Installing GNOME extensions requires python-pipx and jq"
   sudo -v
   gum spin --title "Installing dependencies..." -- $aur -S --needed --noconfirm python-pipx jq
-  gum spin --title "Installing gnome-extensions-cli..." -- pipx install gnome-extensions-cli
+  gum spin --title "Installing gnome-extensions-cli..." -- pipx install gnome-extensions-cli --system-site-packages
   export PATH="$HOME/.local/bin:$PATH"
   gum spin --title "Installing GNOME extensions..." -- bash -c '
   IFS=" " read -r -a extensions <<< "$EXTENSIONS"
@@ -93,5 +126,5 @@ if [[ "$install_apps" == "Yes, install extensions" ]]; then
   dconf load / <./GNOME/extensions-settings.ini
   msg_update "Setting up extensions preferences: completed"
 else
-  msg -n "Skipping GNOME extensions installation"
+  msg -n "Skipping GNOME extensions"
 fi
