@@ -1,8 +1,8 @@
-#             _
-#     _______| |__  _ __ ___
-#    |_  / __| '_ \| '__/ __|
-#   _ / /\__ \ | | | | | (__
-#  (_)___|___/_| |_|_|  \___|
+#                 __
+#     ____  _____/ /_  __________
+#    /_  / / ___/ __ \/ ___/ ___/
+#   _ / /_(__  ) / / / /  / /__
+#  (_)___/____/_/ /_/_/   \___/
 
 # ---------------------------------------------------------------------------- #
 #                                     PATH                                     #
@@ -151,9 +151,9 @@ change-wallpaper() {
 
   if [[ $XDG_CURRENT_DESKTOP == "Hyprland" ]]; then
 
-    old=$(fd current $HOME/Hypr/wallpapers --no-ignore)
-    new="$HOME/Hypr/wallpapers/current_wallpaper.$extension"
-    blurred="$HOME/Hypr/wallpapers/blurred_wallpaper.png"
+    old=$(fd current $HYPRCONF/wallpapers --no-ignore)
+    new="$HYPRCONF/wallpapers/current_wallpaper.$extension"
+    blurred="$HYPRCONF/wallpapers/blurred_wallpaper.png"
 
     dimensions=$(magick identify -format "%w %h" $image)
     width=$(echo $dimensions | cut -d' ' -f1)
@@ -187,9 +187,9 @@ change-wallpaper() {
     fi
     magick $new -blur 50x30 $blurred
     killall hyprpaper
-    wal_tpl=$(cat $HOME/Hypr/hypr/hyprpaper.tpl)
+    wal_tpl=$(cat $HYPRCONF/hypr/hyprpaper.tpl)
     output=${wal_tpl//WALLPAPER/$new}
-    echo "$output" >$HOME/Hypr/hypr/hyprpaper.conf
+    echo "$output" >$HYPRCONF/hypr/hyprpaper.conf
     (hyprpaper &>/dev/null &)
     if [ $? -eq 0 ]; then
       echo "OK!"
@@ -201,11 +201,11 @@ change-wallpaper() {
 
     mode=$(echo "stretch\nfill\nfit\ncenter\ntile" | gum choose --header "Select wallpaper mode: ")
     new_cmd="swaybg -i $image -m $mode -c 000000"
-    niri_config="$HOME/Niri/niri/config.kdl"
-    if ! grep -q "spawn-at-startup \"sh\" \"-c\" \"swaybg" "$niri_config"; then
-      sed -i "/\/\/ startup processes/a spawn-at-startup \"sh\" \"-c\" \"$new_cmd\"" "$niri_config"
+    niri_config="$NIRICONF/niri/config.kdl"
+    if ! grep -q "spawn-at-startup \"sh\" \"-c\" \"swaybg" "$NIRICONF_config"; then
+      sed -i "/\/\/ startup processes/a spawn-at-startup \"sh\" \"-c\" \"$new_cmd\"" "$NIRICONF_config"
     else
-      sed -i "s|^spawn-at-startup \"sh\" \"-c\" \"swaybg.*|spawn-at-startup \"sh\" \"-c\" \"$new_cmd\"|" "$niri_config"
+      sed -i "s|^spawn-at-startup \"sh\" \"-c\" \"swaybg.*|spawn-at-startup \"sh\" \"-c\" \"$new_cmd\"|" "$NIRICONF_config"
     fi
     echo "Selected: $(basename $image)"
     echo "Mode: $mode"
@@ -282,12 +282,6 @@ cleanup() {
   sudo pacman -Rns $(pacman -Qtdq)
   paru -Scc
 }
-
-# ---------------------------------------------------------------------------- #
-#                                COLOR SEQUENCES                               #
-# ---------------------------------------------------------------------------- #
-
-# cat $HOME/.config/zsh/sequences
 
 # ---------------------------------------------------------------------------- #
 #                                     PYENV                                    #
