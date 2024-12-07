@@ -42,7 +42,7 @@ done
 figlet "Base Setup" -f smslant
 
 gum style "Installing packages:" "${formatted_pkgs[@]}"
-install_pkgs=$(gum choose --header "Proceed?" "Yes" "No")
+install_pkgs=$(gum choose --header "Proceed?" "Yes" "No (exit)")
 if [[ "$install_pkgs" == "Yes" ]]; then
   sudo -v
   gum spin --title "Running $aur..." -- sudo $aur -S --needed --noconfirm "${pkgs[@]}"
@@ -52,7 +52,7 @@ else
 fi
 
 gum style "" "Installing fonts:" "${formatted_fonts[@]}"
-install_fonts=$(gum choose --header "Proceed?" "Yes" "No")
+install_fonts=$(gum choose --header "Proceed?" "Yes" "No (exit)")
 if [[ "$install_fonts" == "Yes" ]]; then
   sudo -v
   gum spin --title "Running $aur..." -- sudo $aur -S --needed --noconfirm "${fonts[@]}"
@@ -98,7 +98,7 @@ bash -c "./symlink.sh '$config_folder/starship/starship.toml' --to-config" >/dev
 msg_update "Setting up starship: completed"
 
 msg "Setting up tealdeer..."
-tldr --update >/dev/null
+tldr --update --quiet
 msg_update "Setting up tealdeer: completed"
 
 msg "Setting up xdg-user-dirs..."
@@ -109,3 +109,5 @@ msg -n "Setting up zsh..."
 bash -c "./symlink.sh '$config_folder/zsh/.zshrc' --to-home" >/dev/null
 chsh -s /bin/zsh
 msg -n "Setting up zsh: completed"
+msg -n "Base setup all complete"
+printf "\n"
