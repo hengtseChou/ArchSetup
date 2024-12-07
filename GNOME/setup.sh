@@ -20,7 +20,7 @@ core_apps=(
   sushi
 )
 formatted_core_apps=()
-for app in "${apps[@]}"; do
+for app in "${core_apps[@]}"; do
   formatted_core_apps+=("   - $app")
 done
 
@@ -63,7 +63,7 @@ extra_apps=(
   turtle
 )
 formatted_extra_apps=()
-for app in "${apps[@]}"; do
+for app in "${extra_apps[@]}"; do
   formatted_extra_apps+=("   - $app")
 done
 gum style "Installing some GNOME extra applications..." "${formatted_extra_apps[@]}"
@@ -83,6 +83,7 @@ gsettings set com.github.stunkymonkey.nautilus-open-any-terminal keybindings '<C
 gsettings set com.github.stunkymonkey.nautilus-open-any-terminal new-tab true
 gsettings set com.github.stunkymonkey.nautilus-open-any-terminal flatpak system
 msg_update "Setting up nautilus-open-any-terminal: completed"
+printf "\n"
 
 # ------------------------------------- extensions ------------------------------------- #
 
@@ -128,3 +129,5 @@ if [[ "$install_apps" == "Yes, install extensions" ]]; then
 else
   msg -n "Skipping GNOME extensions"
 fi
+msg -n "GNOME setup all complete"
+printf "\n"
