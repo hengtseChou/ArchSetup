@@ -11,9 +11,9 @@ pkgs=(
   blueman
   brightnessctl
   cliphist
-  fd
   fuzzel
   niri
+  pamixer
   polkit-gnome
   pwvucontrol
   swaybg
@@ -30,7 +30,7 @@ for pkg in "${pkgs[@]}"; do
   formatted_pkg+=("   - $pkg")
 done
 
-gum style "Installing niri apps and utils..." "${formatted_pkg[@]}"
+gum style "Installing niri and utils..." "${formatted_pkg[@]}"
 install_pkgs=$(gum choose --header "Proceed?" "Yes" "No (exit)")
 if [[ "$install_pkgs" == "Yes" ]]; then
   sudo -v
@@ -43,19 +43,25 @@ printf "\n"
 
 msg "Setting up niri..."
 bash -c "./symlink.sh '$config_folder/niri' --to-config" >/dev/null
-scripts_to_ensure=(
-  "$config_folder/niri/config.kdl"
-  "$config_folder/scripts/power-profiles.sh"
-  "$config_folder/scripts/swayidle.sh"
-  "$config_folder/scripts/toggle-swayidle.sh"
-  "$config_folder/scripts/toggle-waybar.sh"
-  "$config_folder/scripts/wlogout.sh"
-  "$config_folder/waybar/config"
-  "$config_folder/waybar/modules.jsonc"
-  "$HOME/.zshrc"
-)
-for script in "${scripts_to_ensure[@]}"; do
-  sed -i "s|\$NIRICONF|$config_folder|g" $(realpath "$script")
-done
+sed -i "s|\$NIRICONF|$config_folder|g" $(realpath "$config_folder/niri/config.kdl")
 msg_update "Setting up niri: completed"
+
+msg "Settings up scripts..."
+sed -i "s|\$NIRICONF|$config_folder|g" $(realpath "$config_folder/scripts/power-profiles.sh")
+sed -i "s|\$NIRICONF|$config_folder|g" $(realpath "$config_folder/scripts/swayidle.sh")
+sed -i "s|\$NIRICONF|$config_folder|g" $(realpath "$config_folder/scripts/toggle-swayidle.sh")
+sed -i "s|\$NIRICONF|$config_folder|g" $(realpath "$config_folder/scripts/toggle-waybar.sh")
+sed -i "s|\$NIRICONF|$config_folder|g" $(realpath "$config_folder/scripts/wlogout.sh")
+msg_update "Settings up scripts: completed"
+
+msg "Setting up waybar..."
+sed -i "s|\$NIRICONF|$config_folder|g" $(realpath "$config_folder/waybar/config")
+sed -i "s|\$NIRICONF|$config_folder|g" $(realpath "$config_folder/waybar/modules.jsonc")
+msg_update "Setting up waybar: completed"
+
+msg "Setting up zsh..."
+sed -i "s|\$NIRICONF|$config_folder|g" $(realpath "$HOME/.zshrc")
+msg_update "Setting up zsh: completed"
+
 msg -n "niri setup all completed"
+printf "\n"
