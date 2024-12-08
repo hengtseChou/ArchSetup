@@ -25,21 +25,17 @@ pkgs=(
   wlogout
   xwayland-satellite
 )
-formatted_pkg=()
-for pkg in "${pkgs[@]}"; do
-  formatted_pkg+=("   - $pkg")
-done
 
-gum style "Installing niri and utils..." "${formatted_pkg[@]}"
+
+printf "Installing niri and utils...\n"
+formatting_pkgs "${pkgs[@]}"
 install_pkgs=$(gum choose --header "Proceed?" "Yes" "No (exit)")
 if [[ "$install_pkgs" == "Yes" ]]; then
   sudo -v
-  gum spin --title "Running $aur..." -- sudo $aur -S --needed --noconfirm "${pkgs[@]}"
-  msg -n "Completed"
+  gum spin --title "Running $aur..." -- sudo $aur -S --needed --noconfirm $(echo "${pkgs[*]}")
 else
   exit 1
 fi
-printf "\n"
 
 msg "Setting up niri..."
 bash -c "./symlink.sh '$config_folder/niri' --to-config" >/dev/null
@@ -63,5 +59,6 @@ msg "Setting up zsh..."
 sed -i "s|\$NIRICONF|$config_folder|g" $(realpath "$HOME/.zshrc")
 msg_update "Setting up zsh: completed"
 
+printf "\n"
 msg -n "niri setup all completed"
 printf "\n"

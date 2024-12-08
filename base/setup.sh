@@ -31,49 +31,39 @@ fonts=(
   ttf-ubuntu-mono-nerd
 )
 
-formatted_pkgs=()
-for pkg in "${pkgs[@]}"; do
-  formatted_pkgs+=("   - $pkg")
-done
-formatted_fonts=()
-for font in "${fonts[@]}"; do
-  formatted_fonts+=("   - $font")
-done
-
 figlet "Base Setup" -f smslant
 
-gum style "Installing packages:" "${formatted_pkgs[@]}"
+printf "Installing packages...\n"
+formatting_pkgs $aur "${pkgs[@]}"
 install_pkgs=$(gum choose --header "Proceed?" "Yes" "No (exit)")
 if [[ "$install_pkgs" == "Yes" ]]; then
   sudo -v
-  gum spin --title "Running $aur..." -- sudo $aur -S --needed --noconfirm "${pkgs[@]}"
-  msg -n "Completed"
+  gum spin --title "Running $aur..." -- sudo $aur -S --needed --noconfirm $(echo "${pkgs[*]}")
 else
   exit 1
 fi
 
-gum style "" "Installing fonts:" "${formatted_fonts[@]}"
+printf "Installing fonts...\n"
+formatting_pkgs $aur "${fonts[@]}"
 install_fonts=$(gum choose --header "Proceed?" "Yes" "No (exit)")
 if [[ "$install_fonts" == "Yes" ]]; then
   sudo -v
-  gum spin --title "Running $aur..." -- sudo $aur -S --needed --noconfirm "${fonts[@]}"
-  msg -n "Completed"
+  gum spin --title "Running $aur..." -- sudo $aur -S --needed --noconfirm $(echo "${fonts[*]}")
 else
   exit 1
 fi
-printf "\n"
 
 msg "Setting up fontconfig..."
 bash -c "./symlink.sh '$config_folder/fontconfig' --to-config; fc-cache -f" >/dev/null
 msg_update "Setting up fontconfig: completed"
 
-msg -n "Setting up git..."
-bash -c "./symlink.sh '$config_folder/git/.gitconfig' --to-home" >/dev/null
-git_username=$(gum input --header "Enter your username for git:")
-git_email=$(gum input --header "Enter your email for git:")
-git config --global user.name "$git_username"
-git config --global user.email "$git_email"
-msg -n "Setting up git: completed"
+# msg -n "Setting up git..."
+# bash -c "./symlink.sh '$config_folder/git/.gitconfig' --to-home" >/dev/null
+# git_username=$(gum input --header "Enter your username for git:")
+# git_email=$(gum input --header "Enter your email for git:")
+# git config --global user.name "$git_username"
+# git config --global user.email "$git_email"
+# msg -n "Setting up git: completed"
 
 msg "Setting up greetd..."
 sudo -v

@@ -1,9 +1,9 @@
 #!/bin/bash
 aur="$1"
 if [[ "$2" == "true" ]]; then
-  config_folder="$HOME/Niri"
+  config_folder="$HOME/Hypr"
 else
-  config_folder="$PWD/niri"
+  config_folder="$PWD/Hyprland"
 fi
 
 pkgs=(
@@ -11,7 +11,6 @@ pkgs=(
   blueman
   brightnessctl
   cliphist
-  fd
   hypridle
   hyprland
   hyprlock
@@ -27,32 +26,26 @@ pkgs=(
   wlogout
   xdg-desktop-portal-hyprland
 )
-formatted_pkg=()
-for pkg in "${pkgs[@]}"; do
-  formatted_pkg+=("   - $pkg")
-done
+printf "\n"
+echo "Installing Hyprland and utils..." 
+formatting_pkgs $aur "${pkgs[@]}"
 
-gum style "Installing Hyprland and utils..." "${formatted_pkg[@]}"
 install_pkgs=$(gum choose --header "Proceed?" "Yes" "No (exit)")
 if [[ "$install_pkgs" == "Yes" ]]; then
   sudo -v
-  gum spin --title "Running $aur..." -- sudo $aur -S --needed --noconfirm "${pkgs[@]}"
-  msg -n "Completed"
+  gum spin --title "Running $aur..." -- sudo $aur -S --needed --noconfirm $(echo "${pkgs[*]}")
 else
   exit 1
 fi
-printf "\n"
 
 msg "Setting up Hyprland..."
+bash -c "./symlink.sh $config_folder/hypr --to-config" >/dev/null
 sed -i "s|\$HYPRCONF|$config_folder|g" $(realpath "$config_folder/hypr/hyprland.conf")
 sed -i "s|\$HYPRCONF|$config_folder|g" $(realpath "$config_folder/hypr/hyprlock.conf")
 sed -i "s|\$HYPRCONF|$config_folder|g" $(realpath "$config_folder/hypr/hyprpaper.conf")
+sed -i "s|\$HYPRCONF|$config_folder|g" $(realpath "$config_folder/hypr/scripts/power-profiles.sh")
+sed -i "s|\$HYPRCONF|$config_folder|g" $(realpath "$config_folder/hypr/scripts/toggle-waybar.sh")
 msg_update "Setting up Hyprland: completed"
-
-msg "Settings up scripts..."
-sed -i "s|\$HYPRCONF|$config_folder|g" $(realpath "$config_folder/scripts/power-profiles.sh")
-sed -i "s|\$HYPRCONF|$config_folder|g" $(realpath "$config_folder/scripts/toggle-waybar.sh")
-msg_update "Settings up scripts: completed"
 
 msg "Setting up rofi..."
 sed -i "s|\$HYPRCONF|$config_folder|g" $(realpath "$config_folder/rofi/config-cliphist.rasi")
@@ -69,5 +62,6 @@ msg "Setting up zsh..."
 sed -i "s|\$HYPRCONF|$config_folder|g" $(realpath "$HOME/.zshrc")
 msg_update "Setting up zsh: completed"
 
+printf "\n"
 msg -n "Hyprland setup all completed"
 printf "\n"

@@ -18,6 +18,7 @@ msg_error() {
 export -f msg
 export -f msg_update
 export -f msg_error
+
 create_dedicated_folder() {
   create=$(gum choose --header "Create a dedicated config folder ~/$1?" "Yes" "No")
   if [[ "$create" == "Yes" ]]; then
@@ -40,6 +41,24 @@ create_dedicated_folder() {
     return 1
   fi
 }
+
+formatting_pkgs() {
+  pkgs=()
+  for pkg in "${@}"; do
+    if pacman -Qq "$pkg" &>/dev/null; then
+      pkgs+=("\033[38;2;117;138;155m$pkg\033[0m [installed, skipping]\n")
+    else
+      pkgs+=("\033[38;2;117;138;155m$pkg\033[0m\n")
+    fi
+  done
+  for i in "${!pkgs[@]}"; do
+    printf "   - ${pkgs[$i]}"
+  done
+  printf "\n"
+}
+export -f formatting_pkgs
+
+# --------------------------------------- starts --------------------------------------- #
 
 deps=("gum" "figlet")
 missing_deps=()
@@ -211,8 +230,18 @@ for choice in $selection; do
     bash ./GNOME/setup.sh $aur
     ;;
   "2")
+    if create_dedicated_folder "Hypr"; then
+      use_hypr_folder="true"
+    else
+      use_hypr_folder="false"
+    fi
+
+    if [[ "$use_hypr_folder" == "true" ]]; then
+      cp -r ./Hyprland/*/ "$HOME/Hypr"
+    fi
+
     figlet "Hyprland" -f smslant
-    bash ./Hyprland/setup.sh $aur $use_config_folder
+    bash ./Hyprland/setup.sh $aur $use_hypr_folder
     ;;
   "3")
     if create_dedicated_folder "Niri"; then

@@ -19,21 +19,17 @@ core_apps=(
   nautilus
   sushi
 )
-formatted_core_apps=()
-for app in "${core_apps[@]}"; do
-  formatted_core_apps+=("   - $app")
-done
 
-gum style "Installing GNOME shell and core applications..." "${formatted_core_apps[@]}"
+printf "Installing GNOME shell and core applications...\n"
+formatting_pkgs "${core_apps[@]}"
+
 install_core_apps=$(gum choose --header "Proceed?" "Yes" "No (exit)")
 if [[ "$install_core_apps" == "Yes" ]]; then
   sudo -v
-  gum spin --title "Running $aur..." -- sudo $aur -S --needed --noconfirm "${core_apps[@]}"
-  msg -n "Completed"
+  gum spin --title "Running $aur..." -- sudo $aur -S --needed --noconfirm $(echo "${core_apps[*]}")
 else
   exit 1
 fi
-printf "\n"
 
 msg "Setting up wm-preferences..."
 dconf load / <./GNOME/wm-preferences.ini
@@ -62,27 +58,23 @@ extra_apps=(
   nautilus-open-any-terminal
   turtle
 )
-formatted_extra_apps=()
-for app in "${extra_apps[@]}"; do
-  formatted_extra_apps+=("   - $app")
-done
-gum style "Installing some GNOME extra applications..." "${formatted_extra_apps[@]}"
+printf "Installing some GNOME extra applications...\n"
+formatting_pkgs "${extra_apps[@]}"
+
 install_extra_apps=$(gum choose --header "Proceed?" "Yes" "No, skip this step")
 if [[ "$install_extra_apps" == "Yes" ]]; then
   sudo -v
-  gum spin --title "Running $aur..." -- sudo $aur -S --needed --noconfirm "${extra_apps[@]}"
-  msg -n "Completed"
-else
-  msg -n "Skipping GNOME extra allpications"
-fi
-printf "\n"
+  gum spin --title "Running $aur..." -- sudo $aur -S --needed --noconfirm $(echo "${extra_apps[*]}")
 
-msg "Setting up nautilus-open-any-terminal..."
-gsettings set com.github.stunkymonkey.nautilus-open-any-terminal terminal alacritty
-gsettings set com.github.stunkymonkey.nautilus-open-any-terminal keybindings '<Ctrl><Alt>t'
-gsettings set com.github.stunkymonkey.nautilus-open-any-terminal new-tab true
-gsettings set com.github.stunkymonkey.nautilus-open-any-terminal flatpak system
-msg_update "Setting up nautilus-open-any-terminal: completed"
+  msg "Setting up nautilus-open-any-terminal..."
+  gsettings set com.github.stunkymonkey.nautilus-open-any-terminal terminal alacritty
+  gsettings set com.github.stunkymonkey.nautilus-open-any-terminal keybindings '<Ctrl><Alt>t'
+  gsettings set com.github.stunkymonkey.nautilus-open-any-terminal new-tab true
+  gsettings set com.github.stunkymonkey.nautilus-open-any-terminal flatpak system
+  msg_update "Setting up nautilus-open-any-terminal: completed"
+else
+  msg -n "Skipping GNOME extra applications"
+fi
 printf "\n"
 
 # ------------------------------------- extensions ------------------------------------- #
@@ -97,17 +89,28 @@ extensions=(
   kimpanel@kde.org
 )
 export EXTENSIONS="${extensions[*]}"
-formatted_exts=()
-for ext in "${extensions[@]}"; do
-  formatted_exts+=("   - ${ext%@*}")
-done
 
-gum style "Installing some GNOME extensions..." "${formatted_exts[@]}"
+printf "Installing some GNOME extensions...\n"
+for ext in "${extensions[@]}"; do
+  echo -ne "   - \033[38;2;117;138;155m${ext%@*}\033[0m\n"
+done
+printf "\n"
+
 install_apps=$(gum choose --header "Proceed?" "Yes" "No, skip this step")
-if [[ "$install_apps" == "Yes, install extensions" ]]; then
-  msg -n "Installing GNOME extensions requires python-pipx and jq"
-  sudo -v
-  gum spin --title "Installing dependencies..." -- $aur -S --needed --noconfirm python-pipx jq
+if [[ "$install_apps" == "Yes" ]]; then
+
+  deps=("python-pipx" "jq")
+
+  printf "Installing dependencies...\n"
+  formatting_pkgs "${deps[@]}"
+  install_deps=$(gum choose --header "Proceed?" "Yes" "No (exit)")
+  if [[ "$install_deps" == "Yes" ]]; then
+    sudo -v
+    gum spin --title "Running $aur..." -- sudo $aur -S --needed --noconfirm $(echo "${deps[*]}")
+  else
+    exit 1
+  fi
+
   gum spin --title "Installing gnome-extensions-cli..." -- pipx install gnome-extensions-cli --system-site-packages
   export PATH="$HOME/.local/bin:$PATH"
   gum spin --title "Installing GNOME extensions..." -- bash -c '
@@ -119,6 +122,7 @@ if [[ "$install_apps" == "Yes, install extensions" ]]; then
     gnome-extensions install "https://extensions.gnome.org$download_url"
   done
   '
+  printf "\n"
   msg -n "Installing GNOME extensions: completed"
   extensions="[$(printf "'%s'," "${extensions[@]}" | sed 's/,$//')]"
   gsettings set org.gnome.shell enabled-extensions "$extensions"
@@ -130,5 +134,6 @@ else
   msg -n "Skipping GNOME extensions"
 fi
 
+printf "\n"
 msg -n "GNOME setup all completed"
 printf "\n"
