@@ -128,6 +128,9 @@ log-out() {
 change-wallpaper() {
 
   wallpaper_dir="$HOME/Pictures/Wallpapers"
+  export GUM_CHOOSE_HEADER_FOREGROUND="#d8dadd"
+  export GUM_CHOOSE_SELECTED_FOREGROUND="#758A9B"
+  export GUM_CHOOSE_CURSOR_FOREGROUND="#758A9B"
   if [ ! -d $wallpaper_dir ]; then
     echo "Error: ~/Pictures/Wallpapers does not exist. Place images into this directory."
     return 1
@@ -201,11 +204,10 @@ change-wallpaper() {
 
     mode=$(echo "stretch\nfill\nfit\ncenter\ntile" | gum choose --header "Select wallpaper mode: ")
     new_cmd="swaybg -i $image -m $mode -c 000000"
-    niri_config="$NIRICONF/niri/config.kdl"
-    if ! grep -q "spawn-at-startup \"sh\" \"-c\" \"swaybg" "$NIRICONF_config"; then
-      sed -i "/\/\/ startup processes/a spawn-at-startup \"sh\" \"-c\" \"$new_cmd\"" "$NIRICONF_config"
+    if ! grep -q "spawn-at-startup \"sh\" \"-c\" \"swaybg" "$NIRICONF/niri/config.kdl"; then
+      sed -i "/\/\/ startup processes/a spawn-at-startup \"sh\" \"-c\" \"$new_cmd\"" "$NIRICONF/niri/config.kdl"
     else
-      sed -i "s|^spawn-at-startup \"sh\" \"-c\" \"swaybg.*|spawn-at-startup \"sh\" \"-c\" \"$new_cmd\"|" "$NIRICONF_config"
+      sed -i "s|^spawn-at-startup \"sh\" \"-c\" \"swaybg.*|spawn-at-startup \"sh\" \"-c\" \"$new_cmd\"|" "$NIRICONF/niri/config.kdl"
     fi
     echo "Selected: $(basename $image)"
     echo "Mode: $mode"
