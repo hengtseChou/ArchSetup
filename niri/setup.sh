@@ -32,13 +32,13 @@ formatting_pkgs "${pkgs[@]}"
 install_pkgs=$(gum choose --header "Proceed?" "Yes" "No (exit)")
 if [[ "$install_pkgs" == "Yes" ]]; then
   sudo -v
-  gum spin --title "Running $aur..." -- sudo $aur -S --needed --noconfirm $(echo "${pkgs[*]}")
+  gum spin --title "Running $aur..." -- $aur -S --needed --noconfirm $(echo "${pkgs[*]}")
 else
   exit 1
 fi
 
 msg "Setting up niri..."
-bash -c "./symlink.sh '$config_folder/niri' --to-config" >/dev/null
+bash -c "./symlink.sh '$config_folder/niri' --to-config"
 sed -i "s|\$NIRICONF|$config_folder|g" $(realpath "$config_folder/niri/config.kdl")
 msg_update "Setting up niri: completed"
 

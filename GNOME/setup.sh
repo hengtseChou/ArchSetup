@@ -26,7 +26,7 @@ formatting_pkgs "${core_apps[@]}"
 install_core_apps=$(gum choose --header "Proceed?" "Yes" "No (exit)")
 if [[ "$install_core_apps" == "Yes" ]]; then
   sudo -v
-  gum spin --title "Running $aur..." -- sudo $aur -S --needed --noconfirm $(echo "${core_apps[*]}")
+  gum spin --title "Running $aur..." -- $aur -S --needed --noconfirm $(echo "${core_apps[*]}")
 else
   exit 1
 fi
@@ -64,8 +64,7 @@ formatting_pkgs "${extra_apps[@]}"
 install_extra_apps=$(gum choose --header "Proceed?" "Yes" "No, skip this step")
 if [[ "$install_extra_apps" == "Yes" ]]; then
   sudo -v
-  gum spin --title "Running $aur..." -- sudo $aur -S --needed --noconfirm $(echo "${extra_apps[*]}")
-
+  gum spin --title "Running $aur..." -- $aur -S --needed --noconfirm $(echo "${extra_apps[*]}")
   msg "Setting up nautilus-open-any-terminal..."
   gsettings set com.github.stunkymonkey.nautilus-open-any-terminal terminal alacritty
   gsettings set com.github.stunkymonkey.nautilus-open-any-terminal keybindings '<Ctrl><Alt>t'
@@ -106,7 +105,7 @@ if [[ "$install_apps" == "Yes" ]]; then
   install_deps=$(gum choose --header "Proceed?" "Yes" "No (exit)")
   if [[ "$install_deps" == "Yes" ]]; then
     sudo -v
-    gum spin --title "Running $aur..." -- sudo $aur -S --needed --noconfirm $(echo "${deps[*]}")
+    gum spin --title "Running $aur..." -- $aur -S --needed --noconfirm $(echo "${deps[*]}")
   else
     exit 1
   fi

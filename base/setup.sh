@@ -38,7 +38,7 @@ formatting_pkgs "${pkgs[@]}"
 install_pkgs=$(gum choose --header "Proceed?" "Yes" "No (exit)")
 if [[ "$install_pkgs" == "Yes" ]]; then
   sudo -v
-  gum spin --title "Running $aur..." -- sudo $aur -S --needed --noconfirm $(echo "${pkgs[*]}")
+  gum spin --title "Running $aur..." -- $aur -S --needed --noconfirm $(echo "${pkgs[*]}")
 else
   exit 1
 fi
@@ -48,17 +48,17 @@ formatting_pkgs "${fonts[@]}"
 install_fonts=$(gum choose --header "Proceed?" "Yes" "No (exit)")
 if [[ "$install_fonts" == "Yes" ]]; then
   sudo -v
-  gum spin --title "Running $aur..." -- sudo $aur -S --needed --noconfirm $(echo "${fonts[*]}")
+  gum spin --title "Running $aur..." -- $aur -S --needed --noconfirm $(echo "${fonts[*]}")
 else
   exit 1
 fi
 
 msg "Setting up fontconfig..."
-bash -c "./symlink.sh '$config_folder/fontconfig' --to-config; fc-cache -f" >/dev/null
+bash -c "./symlink.sh '$config_folder/fontconfig' --to-config; fc-cache -f"
 msg_update "Setting up fontconfig: completed"
 
 msg -n "Setting up git..."
-bash -c "./symlink.sh '$config_folder/git/.gitconfig' --to-home" >/dev/null
+bash -c "./symlink.sh '$config_folder/git/.gitconfig' --to-home"
 git_username=$(gum input --header "Enter your username for git:")
 git_email=$(gum input --header "Enter your email for git:")
 git config --global user.name "$git_username"
@@ -76,7 +76,7 @@ bash -c "sudo cp $config_folder/makepkg/makepkg.conf /etc/makepkg.conf"
 msg_update "Setting up makepkg: completed"
 
 msg "Setting up nano..."
-bash -c "./symlink.sh '$config_folder/nano/.nanorc' --to-home" >/dev/null
+bash -c "./symlink.sh '$config_folder/nano/.nanorc' --to-home"
 msg_update "Setting up nano: completed"
 
 msg "Setting up pacman..."
@@ -85,7 +85,7 @@ bash -c "sudo cp $config_folder/pacman/pacman.conf /etc/pacman.conf"
 msg_update "Setting up pacman: completed"
 
 msg "Setting up starship..."
-bash -c "./symlink.sh '$config_folder/starship/starship.toml' --to-config" >/dev/null
+bash -c "./symlink.sh '$config_folder/starship/starship.toml' --to-config"
 msg_update "Setting up starship: completed"
 
 msg "Setting up tealdeer..."
@@ -97,7 +97,7 @@ xdg-user-dirs-update
 msg_update "Setting up xdg-user-dirs: completed"
 
 msg -n "Setting up zsh..."
-bash -c "./symlink.sh '$config_folder/zsh/.zshrc' --to-home" >/dev/null
+bash -c "./symlink.sh '$config_folder/zsh/.zshrc' --to-home"
 chsh -s /bin/zsh
 msg -n "Setting up zsh: completed"
 

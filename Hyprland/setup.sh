@@ -33,13 +33,13 @@ formatting_pkgs "${pkgs[@]}"
 install_pkgs=$(gum choose --header "Proceed?" "Yes" "No (exit)")
 if [[ "$install_pkgs" == "Yes" ]]; then
   sudo -v
-  gum spin --title "Running $aur..." -- sudo $aur -S --needed --noconfirm $(echo "${pkgs[*]}")
+  gum spin --title "Running $aur..." -- $aur -S --needed --noconfirm $(echo "${pkgs[*]}")
 else
   exit 1
 fi
 
 msg "Setting up Hyprland..."
-bash -c "./symlink.sh $config_folder/hypr --to-config" >/dev/null
+bash -c "./symlink.sh $config_folder/hypr --to-config"
 sed -i "s|\$HYPRCONF|$config_folder|g" $(realpath "$config_folder/hypr/hyprland.conf")
 sed -i "s|\$HYPRCONF|$config_folder|g" $(realpath "$config_folder/hypr/hyprlock.conf")
 sed -i "s|\$HYPRCONF|$config_folder|g" $(realpath "$config_folder/hypr/hyprpaper.conf")

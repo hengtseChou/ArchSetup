@@ -5,7 +5,7 @@
 #    Also support custom directory
 # ---------------------------------------------------------------------------- #
 _usage() {
-  echo "Usage: symlink <dotfile> [--to-home] [--to-config] [--custom-dir <path>]"
+  echo "Usage: symlink <dotfile> [--to-home] [--to-config] [--custom-dir <path>] [-v, --verbose]"
 }
 
 if [ $# -lt 1 ]; then
@@ -15,13 +15,14 @@ fi
 
 source="$1"
 shift
-PARSED=$(getopt -o '' --long to-home,to-config,custom-dir: -- "$@")
+PARSED=$(getopt -o v --long to-home,to-config,custom-dir:,verbose -- "$@")
 if [[ $? -ne 0 ]]; then
   exit 1
 fi
 eval set -- "$PARSED"
 
 target_dir=""
+verbose=0
 while true; do
   case "$1" in
   --to-home)
@@ -35,6 +36,10 @@ while true; do
   --custom-dir)
     target_dir="$2"
     shift 2
+    ;;
+  -v|--verbose)
+    verbose=1
+    shift
     ;;
   --)
     shift # End of options
@@ -60,8 +65,8 @@ if [ -L "${target}" ]; then
   rm ${target}
   ln -s ${source} ${target}
   if [ $? -eq 0 ]; then
-    echo ":: Existing symlink ${target} removed."
-    echo ":: Symlink ${source} -> ${target} created."
+    [ $verbose -eq 1 ] && echo ":: Existing symlink ${target} removed."
+    [ $verbose -eq 1 ] && echo ":: Symlink ${source} -> ${target} created."
   else
     exit 1
   fi
@@ -70,8 +75,8 @@ elif [ -d ${target} ]; then
   rm -rf ${target}/
   ln -s ${source} ${target}
   if [ $? -eq 0 ]; then
-    echo ":: Existing directory ${target} removed."
-    echo ":: Symlink ${source} -> ${target} created."
+    [ $verbose -eq 1 ] && echo ":: Existing directory ${target} removed."
+    [ $verbose -eq 1 ] && echo ":: Symlink ${source} -> ${target} created."
   else
     exit 1
   fi
@@ -80,15 +85,15 @@ elif [ -f ${target} ]; then
   rm ${target}
   ln -s ${source} ${target}
   if [ $? -eq 0 ]; then
-    echo ":: Existing file ${target} removed."
-    echo ":: Symlink ${source} -> ${target} created."
+    [ $verbose -eq 1 ] && echo ":: Existing file ${target} removed."
+    [ $verbose -eq 1 ] && echo ":: Symlink ${source} -> ${target} created."
   else
     exit 1
   fi
 else
   ln -s ${source} ${target}
   if [ $? -eq 0 ]; then
-    echo ":: New symlink ${source} -> ${target} created."
+    [ $verbose -eq 1 ] && echo ":: New symlink ${source} -> ${target} created."
   else
     exit 1
   fi
