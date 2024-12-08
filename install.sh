@@ -19,6 +19,11 @@ export -f msg
 export -f msg_update
 export -f msg_error
 
+is_installed() {
+  command -v $1 > /dev/null
+}
+export -f is_installed
+
 create_dedicated_folder() {
   create=$(gum choose --header "Create a dedicated config folder ~/$1?" "Yes" "No")
   if [[ "$create" == "Yes" ]]; then
@@ -45,7 +50,7 @@ create_dedicated_folder() {
 formatting_pkgs() {
   pkgs=()
   for pkg in "${@}"; do
-    if pacman -Qq "$pkg" &>/dev/null; then
+    if is_installed "$pkg"; then
       pkgs+=("\033[38;2;117;138;155m$pkg\033[0m [installed, skipping]\n")
     else
       pkgs+=("\033[38;2;117;138;155m$pkg\033[0m\n")
@@ -63,7 +68,7 @@ export -f formatting_pkgs
 deps=("gum" "figlet")
 missing_deps=()
 for dep in "${deps[@]}"; do
-  if ! command -v "$dep" 2>&1 >/dev/null; then
+  if ! is_installed "$dep"; then
     missing_deps+=("$dep")
   fi
 done
@@ -128,7 +133,7 @@ aur=$(gum choose "paru" "yay" "aura" "trizen" --header "Choose your AUR helper:"
 msg -n "Selected AUR helper: $aur"
 case $aur in
 "paru")
-  if ! command -v paru 2>&1 >/dev/null; then
+  if ! is_installed paru; then
     msg -n "paru is not installed. Installing now..."
     sudo pacman -S --needed git base-devel
     git clone https://aur.archlinux.org/paru.git
@@ -139,7 +144,7 @@ case $aur in
   fi
   ;;
 "yay")
-  if ! command -v yay 2>&1 >/dev/null; then
+  if ! is_installed yay; then
     msg -n "yay is not installed. Installing now..."
     sudo pacman -S --needed git base-devel
     git clone https://aur.archlinux.org/yay.git
@@ -150,7 +155,7 @@ case $aur in
   fi
   ;;
 "aura")
-  if ! command -v aura 2>&1 >/dev/null; then
+  if ! is_installed aura; then
     msg -n "aura is not installed. Installing now..."
     sudo pacman -S --needed git base-devel
     git clone https://aur.archlinux.org/aura.git
@@ -161,7 +166,7 @@ case $aur in
   fi
   ;;
 "trizen")
-  if ! command -v trizen 2>&1 >/dev/null; then
+  if ! is_installed trizen; then
     msg -n "trizen is not installed. Installing now..."
     sudo pacman -S --needed git base-devel
     git clone https://aur.archlinux.org/trizen.git
@@ -268,3 +273,6 @@ for choice in $selection; do
   esac
 done
 # ---------------------------------------- extra --------------------------------------- #
+
+figlet "Extra" -f smslant
+bash ./extra/setup.sh $aur $use_config_folder
