@@ -20,7 +20,7 @@ export -f msg_update
 export -f msg_error
 
 is_installed() {
-  command -v $1 > /dev/null
+  pacman -Qi "$1" &>/dev/null
 }
 export -f is_installed
 
@@ -62,6 +62,13 @@ formatting_pkgs() {
   printf "\n"
 }
 export -f formatting_pkgs
+
+keep_sudo_alive() {
+  while true; do
+    sudo -v
+    sleep 60
+  done
+}
 
 # --------------------------------------- starts --------------------------------------- #
 
@@ -128,6 +135,11 @@ export GUM_SPIN_TITLE_FOREGROUND="${colors[7]}"
 
 figlet "Arch Setup Script" -f smslant
 print_color_palette
+
+sudo -v
+keep_sudo_alive &
+KEEP_ALIVE_PID=$!
+trap "kill $KEEP_ALIVE_PID 2>/dev/null" EXIT
 
 aur=$(gum choose "paru" "yay" "aura" "trizen" --header "Choose your AUR helper:")
 msg -n "Selected AUR helper: $aur"

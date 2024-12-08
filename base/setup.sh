@@ -37,7 +37,6 @@ printf "Installing packages...\n"
 formatting_pkgs "${pkgs[@]}"
 install_pkgs=$(gum choose --header "Proceed?" "Yes" "No (exit)")
 if [[ "$install_pkgs" == "Yes" ]]; then
-  sudo -v
   gum spin --title "Running $aur..." -- $aur -S --needed --noconfirm $(echo "${pkgs[*]}")
 else
   exit 1
@@ -47,7 +46,6 @@ printf "Installing fonts...\n"
 formatting_pkgs "${fonts[@]}"
 install_fonts=$(gum choose --header "Proceed?" "Yes" "No (exit)")
 if [[ "$install_fonts" == "Yes" ]]; then
-  sudo -v
   gum spin --title "Running $aur..." -- $aur -S --needed --noconfirm $(echo "${fonts[*]}")
 else
   exit 1
@@ -67,12 +65,10 @@ git config --global user.email "$git_email"
 msg -n "Setting up git: completed"
 
 msg "Setting up greetd..."
-sudo -v
 bash -c "sudo systemctl enable greetd.service; sudo cp $config_folder/greetd/config.toml /etc/greetd/config.toml"
 msg_update "Setting up greetd: completed"
 
 msg "Setting up makepkg..."
-sudo -v
 bash -c "sudo cp $config_folder/makepkg/makepkg.conf /etc/makepkg.conf"
 msg_update "Setting up makepkg: completed"
 
@@ -81,7 +77,6 @@ msg "Setting up nano..."
 msg_update "Setting up nano: completed"
 
 msg "Setting up pacman..."
-sudo -v
 bash -c "sudo cp $config_folder/pacman/pacman.conf /etc/pacman.conf"
 msg_update "Setting up pacman: completed"
 

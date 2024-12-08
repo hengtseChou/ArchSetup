@@ -27,12 +27,11 @@ pkgs=(
   xdg-desktop-portal-hyprland
 )
 printf "\n"
-echo "Installing Hyprland and utils..." 
+printf "Installing Hyprland and utils...\n"
 formatting_pkgs "${pkgs[@]}"
 
 install_pkgs=$(gum choose --header "Proceed?" "Yes" "No (exit)")
 if [[ "$install_pkgs" == "Yes" ]]; then
-  sudo -v
   gum spin --title "Running $aur..." -- $aur -S --needed --noconfirm $(echo "${pkgs[*]}")
 else
   exit 1

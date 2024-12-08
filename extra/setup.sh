@@ -36,7 +36,6 @@ if [[ -n $not_installed_apps ]]; then
   if [[ -n $selected_apps ]]; then
     printf "Installing the following apps...\n"
     formatting_pkgs "${selected_apps[@]}"
-    sudo -v
     gum spin --title "Running $aur..." -- $aur -S --needed --noconfirm $(echo "${selected_apps[*]}")
     msg -n "Completed"
 
@@ -90,7 +89,6 @@ if [[ -n $not_installed_cli_utils ]]; then
   if [[ -n $selected_cli_utils ]]; then
     printf "Installing the following CLI utilities...\n"
     formatting_pkgs "${selected_cli_utils[@]}"
-    sudo -v
     gum spin --title "Running $aur..." -- $aur -S --needed --noconfirm $(echo "${selected_cli_utils[*]}")
     msg -n "Completed"
 
@@ -98,7 +96,6 @@ if [[ -n $not_installed_cli_utils ]]; then
       case $app in
       "btop")
         msg -n "Setting up btop..."
-        sudo -v
         sudo setcap cap_perfmon=+ep /usr/bin/btop
         msg -n "Setting up btop: completed"
         ;;
@@ -111,7 +108,6 @@ if [[ -n $not_installed_cli_utils ]]; then
         ;;
       "docker")
         msg -n "Setting up docker..."
-        sudo -v
         sudo groupadd docker >/dev/null
         sudo usermod -aG docker $USER >/dev/null
         msg -n "Setting up docker: completed"
@@ -146,7 +142,6 @@ if [[ -n $not_installed_build_tools ]]; then
   if [[ -n $selected_build_tools ]]; then
     printf "Installing the following build tools...\n"
     formatting_pkgs "${selected_build_tools[@]}"
-    sudo -v
     gum spin --title "Running $aur..." -- $aur -S --needed --noconfirm $(echo "${selected_build_tools[*]}")
     msg -n "Completed"
 
@@ -179,7 +174,6 @@ fi
 
 install_fcitx5=$(gum choose --header "Do you need fcitx5 as input medhod?" "Yes" "No, skip this step")
 if [[ "$install_fcitx5" == "Yes" ]]; then
-  sudo -v
   gum spin --title "Running $aur..." -- $aur -S --needed --noconfirm fcitx5-im fcitx5-chewing fcitx5-mcbopomofo-git
   msg "Setting up fcitx5..."
   bash -c "
@@ -218,7 +212,6 @@ printf "\n"
 
 install_r=$(gum choose --header "Do you need R/RStudio?" "Yes" "No, skip this step")
 if [[ "$install_r" == "Yes" ]]; then
-  sudo -v
   gum spin --title "Running $aur..." -- $aur -S --needed --noconfirm r gcc-fortran
   # install RStudio with the gist PKGBUILD
   gum spin --title "Cloning and installing RStudio..." -- bash -c "
@@ -252,7 +245,6 @@ printf "\n"
 if pacman -Qi spotify &>/dev/null; then
   install_spicetify=$(gum choose --header "You have installed spotify. Do your want to install spicetify for advanced styling?" "Yes" "No, skip this step")
   if [[ "$install_spicetify" == "Yes" ]]; then
-    sudo -v
     sudo chmod a+wr /opt/spotify
     sudo chmod a+wr /opt/spotify/Apps -R
     gum spin --title "Running $aur..." -- $aur -S --needed --noconfirm spicetify-cli

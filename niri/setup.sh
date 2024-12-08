@@ -26,12 +26,10 @@ pkgs=(
   xwayland-satellite
 )
 
-
 printf "Installing niri and utils...\n"
 formatting_pkgs "${pkgs[@]}"
 install_pkgs=$(gum choose --header "Proceed?" "Yes" "No (exit)")
 if [[ "$install_pkgs" == "Yes" ]]; then
-  sudo -v
   gum spin --title "Running $aur..." -- $aur -S --needed --noconfirm $(echo "${pkgs[*]}")
 else
   exit 1
