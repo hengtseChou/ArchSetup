@@ -38,7 +38,7 @@ else
 fi
 
 msg "Setting up niri..."
-bash -c "./symlink.sh '$config_folder/niri' --to-config"
+./symlink.sh $config_folder/niri --to-config
 sed -i "s|\$NIRICONF|$config_folder|g" $(realpath "$config_folder/niri/config.kdl")
 msg_update "Setting up niri: completed"
 

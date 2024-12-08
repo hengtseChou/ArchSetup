@@ -54,11 +54,12 @@ else
 fi
 
 msg "Setting up fontconfig..."
-bash -c "./symlink.sh '$config_folder/fontconfig' --to-config; fc-cache -f"
+./symlink.sh $config_folder/fontconfig --to-config
+fc-cache -f
 msg_update "Setting up fontconfig: completed"
 
 msg -n "Setting up git..."
-bash -c "./symlink.sh '$config_folder/git/.gitconfig' --to-home"
+./symlink.sh $config_folder/git/.gitconfig --to-home
 git_username=$(gum input --header "Enter your username for git:")
 git_email=$(gum input --header "Enter your email for git:")
 git config --global user.name "$git_username"
@@ -76,7 +77,7 @@ bash -c "sudo cp $config_folder/makepkg/makepkg.conf /etc/makepkg.conf"
 msg_update "Setting up makepkg: completed"
 
 msg "Setting up nano..."
-bash -c "./symlink.sh '$config_folder/nano/.nanorc' --to-home"
+./symlink.sh $config_folder/nano/.nanorc --to-home
 msg_update "Setting up nano: completed"
 
 msg "Setting up pacman..."
@@ -85,7 +86,7 @@ bash -c "sudo cp $config_folder/pacman/pacman.conf /etc/pacman.conf"
 msg_update "Setting up pacman: completed"
 
 msg "Setting up starship..."
-bash -c "./symlink.sh '$config_folder/starship/starship.toml' --to-config"
+./symlink.sh $config_folder/starship/starship.toml --to-config
 msg_update "Setting up starship: completed"
 
 msg "Setting up tealdeer..."
@@ -97,7 +98,7 @@ xdg-user-dirs-update
 msg_update "Setting up xdg-user-dirs: completed"
 
 msg -n "Setting up zsh..."
-bash -c "./symlink.sh '$config_folder/zsh/.zshrc' --to-home"
+./symlink.sh $config_folder/zsh/.zshrc --to-home
 chsh -s /bin/zsh
 msg -n "Setting up zsh: completed"
 
