@@ -28,7 +28,7 @@ pkgs=(
 )
 printf "\n"
 echo "Installing Hyprland and utils..." 
-formatting_pkgs $aur "${pkgs[@]}"
+formatting_pkgs "${pkgs[@]}"
 
 install_pkgs=$(gum choose --header "Proceed?" "Yes" "No (exit)")
 if [[ "$install_pkgs" == "Yes" ]]; then

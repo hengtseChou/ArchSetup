@@ -12,7 +12,7 @@ pkgs=(
   fd
   fontconfig
   fzf
-  greetd-tuigreetd
+  greetd-tuigreet
   ifuse
   man-db
   nano
@@ -34,7 +34,7 @@ fonts=(
 figlet "Base Setup" -f smslant
 
 printf "Installing packages...\n"
-formatting_pkgs $aur "${pkgs[@]}"
+formatting_pkgs "${pkgs[@]}"
 install_pkgs=$(gum choose --header "Proceed?" "Yes" "No (exit)")
 if [[ "$install_pkgs" == "Yes" ]]; then
   sudo -v
@@ -44,7 +44,7 @@ else
 fi
 
 printf "Installing fonts...\n"
-formatting_pkgs $aur "${fonts[@]}"
+formatting_pkgs "${fonts[@]}"
 install_fonts=$(gum choose --header "Proceed?" "Yes" "No (exit)")
 if [[ "$install_fonts" == "Yes" ]]; then
   sudo -v
@@ -57,13 +57,13 @@ msg "Setting up fontconfig..."
 bash -c "./symlink.sh '$config_folder/fontconfig' --to-config; fc-cache -f" >/dev/null
 msg_update "Setting up fontconfig: completed"
 
-# msg -n "Setting up git..."
-# bash -c "./symlink.sh '$config_folder/git/.gitconfig' --to-home" >/dev/null
-# git_username=$(gum input --header "Enter your username for git:")
-# git_email=$(gum input --header "Enter your email for git:")
-# git config --global user.name "$git_username"
-# git config --global user.email "$git_email"
-# msg -n "Setting up git: completed"
+msg -n "Setting up git..."
+bash -c "./symlink.sh '$config_folder/git/.gitconfig' --to-home" >/dev/null
+git_username=$(gum input --header "Enter your username for git:")
+git_email=$(gum input --header "Enter your email for git:")
+git config --global user.name "$git_username"
+git config --global user.email "$git_email"
+msg -n "Setting up git: completed"
 
 msg "Setting up greetd..."
 sudo -v
