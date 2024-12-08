@@ -60,7 +60,7 @@ msg_update "Setting up waybar: completed"
 msg "Setting up zsh..."
 sed -i "s|\$HYPRCONF|$config_folder|g" $(realpath "$HOME/.zshrc")
 msg_update "Setting up zsh: completed"
-
 printf "\n"
+
 msg -n "Hyprland setup all completed"
 printf "\n"

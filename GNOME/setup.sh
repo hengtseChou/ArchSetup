@@ -93,11 +93,10 @@ for ext in "${extensions[@]}"; do
 done
 printf "\n"
 
-install_apps=$(gum choose --header "Proceed?" "Yes" "No, skip this step")
-if [[ "$install_apps" == "Yes" ]]; then
+install_extensions=$(gum choose --header "Proceed?" "Yes" "No, skip this step")
+if [[ "$install_extensions" == "Yes" ]]; then
 
   deps=("python-pipx" "jq")
-
   printf "Installing dependencies...\n"
   formatting_pkgs "${deps[@]}"
   install_deps=$(gum choose --header "Proceed?" "Yes" "No (exit)")
@@ -129,7 +128,7 @@ if [[ "$install_apps" == "Yes" ]]; then
 else
   msg -n "Skipping GNOME extensions"
 fi
-
 printf "\n"
+
 msg -n "GNOME setup all completed"
 printf "\n"

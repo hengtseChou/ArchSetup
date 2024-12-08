@@ -263,3 +263,5 @@ if pacman -Qi spotify &>/dev/null; then
   fi
 fi
 printf "\n"
+
+msg -n "Extra setup all completed"

@@ -96,6 +96,7 @@ msg -n "Setting up zsh..."
 ./symlink.sh $config_folder/zsh/.zshrc --to-home
 chsh -s /bin/zsh
 msg -n "Setting up zsh: completed"
+printf "\n"
 
 msg -n "Base setup all completed"
 printf "\n"

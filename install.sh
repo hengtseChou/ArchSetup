@@ -284,7 +284,17 @@ for choice in $selection; do
     ;;
   esac
 done
+
 # ---------------------------------------- extra --------------------------------------- #
 
 figlet "Extra" -f smslant
 bash ./extra/setup.sh $aur $use_config_folder
+
+# --------------------------------------- theming -------------------------------------- #
+
+printf "Wait! We got more theming coming\n"
+figlet "GTK Themes" -f smslant
+bash ./theming/themes.sh $aur
+
+figlet "Icons" -f smslant
+bash ./theming/icons.sh $aur
