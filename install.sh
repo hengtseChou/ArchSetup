@@ -135,6 +135,7 @@ case $aur in
     cd paru
     makepkg -si
     cd ..
+    rm -rf paru
   fi
   ;;
 "yay")
@@ -145,6 +146,7 @@ case $aur in
     cd yay
     makepkg -si
     cd ..
+    rm -rf yay
   fi
   ;;
 "aura")
@@ -155,6 +157,7 @@ case $aur in
     cd aura
     makepkg -si
     cd ..
+    rm -rf aura
   fi
   ;;
 "trizen")
@@ -165,6 +168,7 @@ case $aur in
     cd trizen
     makepkg -si
     cd ..
+    rm -rf trizen
   fi
   ;;
 esac
